@@ -49,7 +49,8 @@ def get_speed_direction(planet, planets):
     zeahler = np.cross(position_center_of_mass_com_and_planet, z)
     nenner = LA.norm(np.cross(abs_pos_mass, z))
 
-    result = np.division(zeahler, nenner)  # todo vektor division!!!
+    np.divide(zeahler, nenner)
+    result = np.division(zeahler, nenner)
     return result
 
 
