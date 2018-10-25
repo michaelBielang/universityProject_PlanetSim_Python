@@ -48,18 +48,20 @@ def get_gravitation_force(planet_1, planet_2):
 
 def get_initial_velocity(planet, planets):
     """"get initial velocity"""
+    total_mass = get_total_mass(planets)
 
-    speed = get_speed(planet, planets)
+    for planet in planets:
+        speed = get_speed(planet, planets, total_mass)
 
-    speed_direction = get_speed_direction(planet, planets)
+        speed_direction = get_speed_direction(planet, planets)
 
-    # todo unsicher ob das so hinhaut
-    """  
-               (ri - ri,rs)  x z
-    v = |v|*  -----------------
-               |(ri - ri,rs) x z |
-    """
-    v = [speed_direction[0] * speed, speed_direction[1] * speed, speed_direction[2] * speed]
+        # todo unsicher ob das so hinhaut
+        """  
+                   (ri - ri,rs)  x z
+        v = |v|*  -----------------
+                   |(ri - ri,rs) x z |
+        """
+        planet.set_velocity([speed_direction[0] * speed, speed_direction[1] * speed, speed_direction[2] * speed])
 
 
 def get_speed_direction(planet, planets):
@@ -74,7 +76,7 @@ def get_speed_direction(planet, planets):
 
     z = [0, 0, 1]
     # (ri - ri,rs)
-    position_center_of_mass_com_and_planet = get_r(planet, planets)
+    position_center_of_mass_com_and_planet = get_ri_minus_rirs(planet, planets)
 
     #  |(ri - ri,rs) |
     abs_pos_mass = get_pos_mass_abs(position_center_of_mass_com_and_planet)
@@ -87,13 +89,13 @@ def get_speed_direction(planet, planets):
     return result
 
 
-def get_speed(planet, planets):
+def get_speed(planet, planets, total_mass):
     """ |v| = (M-mi) / M * sqrt(GM/r)  mit r = | ri-rsi |"""
 
-    M = get_total_mass(planets)
+    M = total_mass
     m = planet.get_mass()
     G = scipy.constants.gravitational_constant
-    r = get_pos_mass_abs(get_r(planet, planets))
+    r = get_pos_mass_abs(get_ri_minus_rirs(planet, planets))
     return (M - m) / M * math.sqrt((G * M) / r)
 
 
@@ -111,7 +113,7 @@ def get_pos_mass_abs(position_center_of_mass_com_and_planet):
     return math.sqrt(variable_x + variable_y + variable_z)
 
 
-def get_r(planet, planets):
+def get_ri_minus_rirs(planet, planets):
     """
     (ri - ri,rs)
      Masseschwerpunkt zwischen Masseschwerpunkt und Planet
