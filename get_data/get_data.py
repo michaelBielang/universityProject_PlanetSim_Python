@@ -7,14 +7,14 @@ import scipy.constants
 def get_center_of_mass(planets):
     """ returns the location of the center of mass"""
 
-    mass_position = [0.0, 0.0, 0.0]
+    rs = np.array([0.0, 0.0, 0.0])
 
     for planet in planets:
-        mass_position += [position * planet.get_mass() for position in planet.get_position()]
+        rs += [planet.get_position() * planet.get_mass()]
 
     # rs = 1/M sum m*r
-    mass_position = [position * (1 / get_total_mass(planets)) for position in mass_position]
-    return mass_position
+    rs = [(1 / get_total_mass(planets)) * rs]
+    return rs
 
 
 def get_total_mass(planets):
@@ -35,15 +35,13 @@ def get_gravitation_force(planet_1, planet_2):
     m2 = planet_2.getMass()
     zaehler = m1 * m2
 
-    x = planet_1.get_position()[0] - planet_2.get_position()[0]
-    y = planet_1.get_position()[0] - planet_2.get_position()[0]
-    z = planet_1.get_position()[0] - planet_2.get_position()[0]
-    nenner = math.pow(get_pos_mass_abs([x, y, z]), 3)
+    r2_minus_r1 = np.array(planet_2.get_position() - planet_1.get_position())
+    nenner = math.pow(get_skalar_produkt(r2_minus_r1), 3)
 
     part_1 = G * zaehler / nenner
 
     # todo check ob korrekt. Was wenn pos p2 > pos p1 dann wäre x negativ?
-    return [x * part_1, y * part_1, z * part_1]
+    return np.array(part_1 * r2_minus_r1)
 
 
 def get_initial_velocity(planet, planets):
@@ -79,7 +77,7 @@ def get_speed_direction(planet, planets):
     position_center_of_mass_com_and_planet = get_ri_minus_rirs(planet, planets)
 
     #  |(ri - ri,rs) |
-    abs_pos_mass = get_pos_mass_abs(position_center_of_mass_com_and_planet)
+    abs_pos_mass = get_skalar_produkt(position_center_of_mass_com_and_planet)
 
     zeahler = np.cross(position_center_of_mass_com_and_planet, z)
     nenner = LA.norm(np.cross(abs_pos_mass, z))
@@ -95,11 +93,11 @@ def get_speed(planet, planets, total_mass):
     M = total_mass
     m = planet.get_mass()
     G = scipy.constants.gravitational_constant
-    r = get_pos_mass_abs(get_ri_minus_rirs(planet, planets))
+    r = get_skalar_produkt(get_ri_minus_rirs(planet, planets))
     return (M - m) / M * math.sqrt((G * M) / r)
 
 
-def get_pos_mass_abs(position_center_of_mass_com_and_planet):
+def get_skalar_produkt(position_center_of_mass_com_and_planet):
     """
     | (ri - ri,rs) |
     Betrag von Vektor = sqrt(x²+y²+z²)
@@ -118,10 +116,8 @@ def get_ri_minus_rirs(planet, planets):
     (ri - ri,rs)
      Masseschwerpunkt zwischen Masseschwerpunkt und Planet
      """
-    counter = 0
-    position_center_of_mass_com_and_planet = [0, 0, 0]
-    for position_center_of_mass in get_center_of_mass(planets):
-        position_center_of_mass_com_and_planet[counter] = position_center_of_mass - (
-                position_center_of_mass + planet.get_position()[counter])
-        counter += 1
+
+    position_center_of_mass_com_and_planet = np.array(get_skalar_produkt(planets))
+    position_center_of_mass_com_and_planet -= np.array(2 * planet.get_position())
+
     return position_center_of_mass_com_and_planet
