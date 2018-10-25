@@ -24,6 +24,28 @@ def get_total_mass(planets):
     return M
 
 
+def get_gravitation_force(planet_1, planet_2):
+    """
+          m1*m2
+    G * --------- (r2-r1)
+        |r2 - r1|³
+    """
+    G = scipy.constants.gravitational_constant
+    m1 = planet_1.getMass()
+    m2 = planet_2.getMass()
+    zaehler = m1 * m2
+
+    x = planet_1.get_position()[0] - planet_2.get_position()[0]
+    y = planet_1.get_position()[0] - planet_2.get_position()[0]
+    z = planet_1.get_position()[0] - planet_2.get_position()[0]
+    nenner = math.pow(get_pos_mass_abs([x, y, z]), 3)
+
+    part_1 = G * zaehler / nenner
+
+    # todo check ob korrekt. Was wenn pos p2 > pos p1 dann wäre x negativ?
+    return [x * part_1, y * part_1, z * part_1]
+
+
 def get_initial_velocity(planet, planets):
     """"get initial velocity"""
 
@@ -31,13 +53,24 @@ def get_initial_velocity(planet, planets):
 
     speed_direction = get_speed_direction(planet, planets)
 
-    result = [speed_direction[0] * speed, speed_direction[1] * speed, speed_direction[2] * speed]
+    # todo unsicher ob das so hinhaut
+    """  
+               (ri - ri,rs)  x z
+    v = |v|*  -----------------
+               |(ri - ri,rs) x z |
+    """
+    v = [speed_direction[0] * speed, speed_direction[1] * speed, speed_direction[2] * speed]
 
 
 def get_speed_direction(planet, planets):
-    #  (ri - ri,rs) x z
-    #  -----------------
-    # |(ri - ri,rs) x z |
+    """"
+    https://de.serlo.org/mathe/geometrie/analytische-geometrie/methoden-vektorrechnung/vektorprodukt/vektor-kreuzprodukt
+
+     v    (ri - ri,rs)  x z
+    -- =  -----------------
+    |v|   |(ri - ri,rs) x z |
+
+    """
 
     z = [0, 0, 1]
     # (ri - ri,rs)
@@ -74,11 +107,15 @@ def get_pos_mass_abs(position_center_of_mass_com_and_planet):
     variable_y = math.pow(position_center_of_mass_com_and_planet[1], 2)
     variable_z = math.pow(position_center_of_mass_com_and_planet[2], 2)
     # Betrag der Vektoren
+    # https://de.serlo.org/mathe/geometrie/analytische-geometrie/methoden-vektorrechnung/skalarprodukt/skalarprodukt
     return math.sqrt(variable_x + variable_y + variable_z)
 
 
 def get_r(planet, planets):
-    """ (ri - ri,rs) """
+    """
+    (ri - ri,rs)
+     Masseschwerpunkt zwischen Masseschwerpunkt und Planet
+     """
     counter = 0
     position_center_of_mass_com_and_planet = [0, 0, 0]
     for position_center_of_mass in get_center_of_mass(planets):
