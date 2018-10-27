@@ -3,8 +3,10 @@ from numpy import linalg as LA
 import math
 import scipy.constants
 
+from planet import planet
 
-def get_center_of_mass(planets):
+
+def get_center_of_mass(planets: list):
     """ returns the location of the center of mass"""
 
     rs = np.array([0.0, 0.0, 0.0])
@@ -17,22 +19,22 @@ def get_center_of_mass(planets):
     return rs
 
 
-def get_total_mass(planets):
+def get_total_mass(planets: list):
     M = 0.0
     for planet in planets:
         M += planet.get_mass()
     return M
 
 
-def get_gravitation_force(planet_1, planet_2):
+def get_gravitation_force(planet_1: planet, planet_2: planet):
     """
           m1*m2
     G * --------- (r2-r1)
         |r2 - r1|³
     """
     G = scipy.constants.gravitational_constant
-    m1 = planet_1.getMass()
-    m2 = planet_2.getMass()
+    m1 = planet_1.get_mass()
+    m2 = planet_2.get_mass()
     zaehler = m1 * m2
 
     r2_minus_r1 = np.array(planet_2.get_position() - planet_1.get_position())
@@ -44,7 +46,7 @@ def get_gravitation_force(planet_1, planet_2):
     return np.array(part_1 * r2_minus_r1)
 
 
-def get_initial_velocity(planet, planets):
+def get_initial_velocity(planets: list):
     """"get initial velocity"""
     total_mass = get_total_mass(planets)
 
@@ -62,7 +64,7 @@ def get_initial_velocity(planet, planets):
         planet.set_velocity([speed_direction[0] * speed, speed_direction[1] * speed, speed_direction[2] * speed])
 
 
-def get_speed_direction(planet, planets):
+def get_speed_direction(planet: planet, planets):
     """"
     https://de.serlo.org/mathe/geometrie/analytische-geometrie/methoden-vektorrechnung/vektorprodukt/vektor-kreuzprodukt
 
@@ -87,7 +89,7 @@ def get_speed_direction(planet, planets):
     return result
 
 
-def get_speed(planet, planets, total_mass):
+def get_speed(planet: planet, planets: list, total_mass: float):
     """ |v| = (M-mi) / M * sqrt(GM/r)  mit r = | ri-rsi |"""
 
     M = total_mass
@@ -97,7 +99,7 @@ def get_speed(planet, planets, total_mass):
     return (M - m) / M * math.sqrt((G * M) / r)
 
 
-def get_skalar_produkt(position_center_of_mass_com_and_planet):
+def get_skalar_produkt(position_center_of_mass_com_and_planet: np.ndarray):
     """
     | (ri - ri,rs) |
     Betrag von Vektor = sqrt(x²+y²+z²)
@@ -111,13 +113,13 @@ def get_skalar_produkt(position_center_of_mass_com_and_planet):
     return math.sqrt(variable_x + variable_y + variable_z)
 
 
-def get_ri_minus_rirs(planet, planets):
+def get_ri_minus_rirs(planet: planet, planets: list):
     """
     (ri - ri,rs)
      Masseschwerpunkt zwischen Masseschwerpunkt und Planet
      """
 
-    position_center_of_mass_com_and_planet = np.array(get_skalar_produkt(planets))
+    position_center_of_mass_com_and_planet = np.array(get_center_of_mass(planets))
     position_center_of_mass_com_and_planet -= np.array(2 * planet.get_position())
 
     return position_center_of_mass_com_and_planet
