@@ -1,3 +1,6 @@
+import numpy as np
+
+
 class Body:
     """Subclass of Turtle representing a gravitationally-acting body.
 
@@ -7,7 +10,17 @@ class Body:
     px, py: x, y positions in m
     """
 
-    name = 'Body'
-    mass = None
-    vx = vy = 0.0
-    px = py = 0.0
+    def __init__(self, name, mass, position, velocity):
+        """Initialize Body
+
+        Parameter:
+        name(str)
+        mass(float)
+        position(numpy.array[3-dimensional])
+        velocity(numpy.array[3-dimensional])
+        """
+        self.name = name
+        self.mass = mass
+        self.position = position
+        self.velocity = velocity
+
