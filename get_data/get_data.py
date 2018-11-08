@@ -9,13 +9,13 @@ from planet import planet
 def get_center_of_mass(planets: list):
     """ returns the location of the center of mass"""
 
-    rs = np.array([0.0, 0.0, 0.0])
+    rs = np.array([0.0, 0.0, 0.0], np.float64)
 
     for planet in planets:
-        rs += [planet.get_position() * planet.get_mass()]
+        rs += planet.get_position() * planet.get_mass()
 
     # rs = 1/M sum m*r
-    rs = [(1 / get_total_mass(planets)) * rs]
+    rs = [rs / get_total_mass(planets)]
     return rs
 
 
@@ -37,12 +37,11 @@ def get_gravitation_force(planet_1: planet, planet_2: planet):
     m2 = planet_2.get_mass()
     zaehler = m1 * m2
 
-    r2_minus_r1 = np.array(planet_2.get_position() - planet_1.get_position())
-    nenner = math.pow(get_skalar_produkt(r2_minus_r1), 3)
+    r2_minus_r1 = np.absolute(planet_2.get_position() - planet_1.get_position())
+    nenner = math.pow(np.linalg.norm(r2_minus_r1), 3)
 
     part_1 = G * zaehler / nenner
 
-    # todo check ob korrekt. Was wenn pos p2 > pos p1 dann wäre x negativ?
     return np.array(part_1 * r2_minus_r1)
 
 
@@ -99,15 +98,15 @@ def get_speed(planet: planet, planets: list, total_mass: float):
     return (M - m) / M * math.sqrt((G * M) / r)
 
 
-def get_skalar_produkt(position_center_of_mass_com_and_planet: np.ndarray):
+def get_skalar_produkt(array: np.array):
     """
     | (ri - ri,rs) |
     Betrag von Vektor = sqrt(x²+y²+z²)
     """
 
-    variable_x = math.pow(position_center_of_mass_com_and_planet[0], 2)
-    variable_y = math.pow(position_center_of_mass_com_and_planet[1], 2)
-    variable_z = math.pow(position_center_of_mass_com_and_planet[2], 2)
+    variable_x = math.pow(array[0], 2)
+    variable_y = math.pow(array[1], 2)
+    variable_z = math.pow(array[2], 2)
     # Betrag der Vektoren
     # https://de.serlo.org/mathe/geometrie/analytische-geometrie/methoden-vektorrechnung/skalarprodukt/skalarprodukt
     return math.sqrt(variable_x + variable_y + variable_z)
@@ -119,7 +118,4 @@ def get_ri_minus_rirs(planet: planet, planets: list):
      Masseschwerpunkt zwischen Masseschwerpunkt und Planet
      """
 
-    position_center_of_mass_com_and_planet = np.array(get_center_of_mass(planets))
-    position_center_of_mass_com_and_planet -= np.array(2 * planet.get_position())
-
-    return position_center_of_mass_com_and_planet
+    return planet.get_position() - get_center_of_mass(planets)
