@@ -3,7 +3,7 @@ from numpy import linalg as LA
 import math
 import scipy.constants
 
-from planet import planet
+from test.planet import planet
 
 
 def get_center_of_mass(planets: list):
