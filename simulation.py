@@ -21,9 +21,10 @@ def start_default_sim():
     sun = get_data.planet(1.98 * math.pow(10, 30), "Sun", 0, 0, 0, 0, 0, 0)
     planet_list = [planet_earth, sun]
     get_data.get_initial_velocity(planet_list)
-    for planet in planet_list:
-        print(planet.get_velocity())
-        print(planet.get_position())
+    for x in range(0, 100, 1):
+        for planet in planet_list:
+            print(planet.get_velocity())
+            print(planet.get_position())
 
 
 def plot_test_2():

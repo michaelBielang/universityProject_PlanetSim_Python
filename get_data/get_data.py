@@ -1,11 +1,13 @@
-import numpy as np
-from numpy import linalg as LA
 import math
+
+import numpy as np
 import scipy.constants
+from numpy import linalg as LA
 
-from test.planet import planet
+from get_data.planet import planet
 
 
+# ok
 def get_center_of_mass(planets: list):
     """ returns the location of the center of mass"""
 
