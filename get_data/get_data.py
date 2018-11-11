@@ -7,7 +7,7 @@ from numpy import linalg as LA
 from get_data.planet import planet
 
 
-# ok
+# ok test
 def get_center_of_mass(planets: list):
     """ returns the location of the center of mass"""
 
