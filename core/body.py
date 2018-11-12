@@ -10,7 +10,7 @@ class Body:
     px, py: x, y positions in m
     """
 
-    def __init__(self, name, mass, position, velocity):
+    def __init__(self, name, mass, position, velocity,radius):
         """Initialize Body
 
         Parameter:
@@ -23,4 +23,4 @@ class Body:
         self.mass = mass
         self.position = position
         self.velocity = velocity
-
+        self.radius = radius

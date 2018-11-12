@@ -1,13 +1,14 @@
-from PyQt5 import QtCore, QtGui, QtWidgets,uic
+from PyQt5 import QtWidgets,uic
 import sys,multiprocessing
 
-import gui.galaxy_renderer
-from gui.galaxy_renderer import simulation_mockup, galaxy_renderer
+from gui import opengl_simulation
+from gui.galaxy_renderer import galaxy_renderer
 
 
-class Ui(QtWidgets.QDialog):
-    def __init__(self):
-        super(Ui, self).__init__()
+class qt_Ui(QtWidgets.QDialog):
+    def __init__(self,body_list):
+        self.body_list = body_list
+        super(qt_Ui, self).__init__()
         uic.loadUi('Default_Context_Menu.ui', self)
         self.startButton.clicked.connect(self.start_simulation)
         self.stopButton.clicked.connect(self.stop_simulation)
@@ -23,8 +24,8 @@ class Ui(QtWidgets.QDialog):
         """
         self.renderer_conn, self.simulation_conn = multiprocessing.Pipe()
         self.simulation_process = \
-            multiprocessing.Process(target=simulation_mockup.startup,
-                                    args=(self.simulation_conn, 16, 1))
+            multiprocessing.Process(target=opengl_simulation.startup,
+                                    args=(self.simulation_conn, self.body_list))
         self.render_process = \
             multiprocessing.Process(target=galaxy_renderer.startup,
                                     args=(self.renderer_conn, 60), )
@@ -54,9 +55,19 @@ class Ui(QtWidgets.QDialog):
 
 
 if __name__ == '__main__':
+
+    import core.body as bd
+    import numpy as np
+    bdy = bd.Body('Test',1,np.array([0.1,0.1,0.1]),100,0.1)
+    bdy2 = bd.Body('Test',1,np.array([0.2,0.2,0.2]),100,0.1)
+
+    import numpy as np
+    body_list = [bdy,bdy2]
+    #Only for Testing without Simulation
     app = QtWidgets.QApplication(sys.argv)
-    simulation_gui = Ui()
+    simulation_gui = qt_Ui(body_list)
     simulation_gui.show()
-    #simulation_gui.start_simulation()
     sys.exit(app.exec_())
     sys.exit(app.exec_())
+
+
