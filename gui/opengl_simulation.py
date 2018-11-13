@@ -28,6 +28,7 @@ def _move_bodies(bodies,bodies_list):
     :param bodies_list: List of Bodies
     :return: The NP Array for Pipe Transport
     """
+    scale_factor = 150 * 10 ** 9
 
     if bodies is None:
         # If bodies is not initialised
@@ -35,7 +36,7 @@ def _move_bodies(bodies,bodies_list):
 
     for body_index in range(bodies_list.__len__()):
 
-            bodies[body_index] = np.append(bodies_list[body_index].position,bodies_list[body_index].radius)
+            bodies[body_index] = np.append(bodies_list[body_index].position / bodies_list[body_index].SCALE_FACTOR, bodies_list[body_index].radius)
 
     # ToDo is sleep nessesary? Maybe not (or yes for Performance Resons)
     time.sleep(1/__FPS)
@@ -51,13 +52,19 @@ def startup(sim_pipe, bodies_list):
     :param bodies_list: The Body List deliverd by the Sinmulation
     :return:
     """
-    #bodies = _initialise_bodies(bodies_list)
+    import test.simulation as s
+
     bodies = None
+
     while True:
         if sim_pipe.poll():
             message = sim_pipe.recv()
             if isinstance(message, str) and message == END_MESSAGE:
                 print('simulation exiting ...')
                 sys.exit(0)
-        bodies  = _move_bodies(bodies,bodies_list)
+
+        s.sim(sim_pipe, bodies_list)
+
+        bodies = _move_bodies(bodies,bodies_list)
+
         sim_pipe.send(bodies)

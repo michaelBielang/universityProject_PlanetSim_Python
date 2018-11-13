@@ -4,7 +4,7 @@ import numpy as np
 G = 6.67428e-11
 
 
-def calculate_and_set_new_velocity(subject, bodies, timeStep):
+def calculate_and_set_new_velocity(subject, bodies, timestep):
     """Set velocity based on every planet in the system."""
     acc = np.array([0.0, 0.0, 0.0])
 
@@ -25,7 +25,7 @@ def calculate_and_set_new_velocity(subject, bodies, timeStep):
                 acc += f_vector/subject.mass
 
     # velocity += acceleration*timestep
-    subject.velocity += acc*timeStep
+    subject.velocity += acc*timestep
 
 
 def calculate_and_set_new_pos(subject, timeStep):

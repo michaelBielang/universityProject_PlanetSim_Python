@@ -5,15 +5,21 @@ from gui import opengl_simulation
 from gui.galaxy_renderer import galaxy_renderer
 
 
-class qt_Ui(QtWidgets.QDialog):
+class qt_ui(QtWidgets.QDialog):
     def __init__(self,body_list):
         self.body_list = body_list
-        super(qt_Ui, self).__init__()
+
+        super(qt_ui, self).__init__()
         uic.loadUi('Default_Context_Menu.ui', self)
+
         self.startButton.clicked.connect(self.start_simulation)
         self.stopButton.clicked.connect(self.stop_simulation)
+
         #self.SpeedLabel.valuechanged.connect(self.update())
-        self.show()
+        self.renderer_conn, self.simulation_conn = None, None
+        self.render_process = None
+        self.simulation_process = None
+
     def update(self):
         self.SpeedLabel.value = self.SpeedSlider.value
         self.SunMassLabel.value = self.SunMassSlider.value
@@ -55,19 +61,12 @@ class qt_Ui(QtWidgets.QDialog):
 
 
 if __name__ == '__main__':
+    import test.simulation as s
 
-    import core.body as bd
-    import numpy as np
-    bdy = bd.Body('Test',1,np.array([0.1,0.1,0.1]),100,0.1)
-    bdy2 = bd.Body('Test',1,np.array([0.2,0.2,0.2]),100,0.1)
-
-    import numpy as np
-    body_list = [bdy,bdy2]
-    #Only for Testing without Simulation
+    body_list = s.initialize()
     app = QtWidgets.QApplication(sys.argv)
-    simulation_gui = qt_Ui(body_list)
+    simulation_gui = qt_ui(body_list)
     simulation_gui.show()
-    sys.exit(app.exec_())
     sys.exit(app.exec_())
 
 
