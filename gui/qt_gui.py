@@ -1,6 +1,8 @@
 from PyQt5 import QtWidgets,uic
 import sys,multiprocessing
 
+from PyQt5.QtCore import QFile
+
 from gui import opengl_simulation
 from gui.galaxy_renderer import galaxy_renderer
 
@@ -10,7 +12,13 @@ class qt_ui(QtWidgets.QDialog):
         self.body_list = body_list
 
         super(qt_ui, self).__init__()
+        import os
+        old_working_dir = os.getcwd()
+        new_working_dir = os.path.dirname(os.path.abspath(__file__))
+
+        os.chdir(new_working_dir)
         uic.loadUi('Default_Context_Menu.ui', self)
+        os.chdir(old_working_dir)
 
         self.startButton.clicked.connect(self.start_simulation)
         self.stopButton.clicked.connect(self.stop_simulation)
@@ -61,8 +69,7 @@ class qt_ui(QtWidgets.QDialog):
 
 
 if __name__ == '__main__':
-    import test.simulation as s
-
+    import core.simulation as s
     body_list = s.initialize()
     app = QtWidgets.QApplication(sys.argv)
     simulation_gui = qt_ui(body_list)

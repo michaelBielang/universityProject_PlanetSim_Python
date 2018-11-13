@@ -52,7 +52,7 @@ def startup(sim_pipe, bodies_list):
     :param bodies_list: The Body List deliverd by the Sinmulation
     :return:
     """
-    import test.simulation as s
+    import core.simulation as s
 
     bodies = None
 
@@ -63,7 +63,7 @@ def startup(sim_pipe, bodies_list):
                 print('simulation exiting ...')
                 sys.exit(0)
 
-        s.sim(sim_pipe, bodies_list)
+        s.sim_calc(bodies_list,70000)
 
         bodies = _move_bodies(bodies,bodies_list)
 

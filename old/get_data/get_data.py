@@ -4,7 +4,7 @@ import numpy as np
 import scipy.constants
 from numpy import linalg as LA
 
-from get_data.planet import planet
+from old.get_data import planet
 
 
 # ok test
