@@ -1,7 +1,5 @@
-from PyQt5 import QtWidgets,uic
-import sys,multiprocessing
-
-from PyQt5.QtCore import QFile
+from PyQt5 import QtWidgets, uic
+import sys, multiprocessing
 
 from gui import opengl_simulation
 from gui.galaxy_renderer import galaxy_renderer
