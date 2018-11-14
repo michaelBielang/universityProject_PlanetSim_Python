@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Setting Menu</string>
   </property>
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
@@ -57,7 +57,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="SunMassLable">
+     <widget class="QLabel" name="SunMassLabel">
       <property name="text">
        <string>1</string>
       </property>
@@ -69,13 +69,16 @@
     <item>
      <widget class="QSlider" name="SunMassSlider">
       <property name="minimum">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="maximum">
-       <number>10</number>
+       <number>100</number>
+      </property>
+      <property name="singleStep">
+       <number>1</number>
       </property>
       <property name="pageStep">
-       <number>11</number>
+       <number>1</number>
       </property>
       <property name="value">
        <number>1</number>
@@ -104,6 +107,15 @@
     </item>
     <item>
      <widget class="QSlider" name="SpeedSlider">
+      <property name="maximum">
+       <number>100</number>
+      </property>
+      <property name="pageStep">
+       <number>1</number>
+      </property>
+      <property name="value">
+       <number>10</number>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -129,38 +141,5 @@
   </widget>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>SunMassSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>SunMassLable</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>263</x>
-     <y>129</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>188</x>
-     <y>129</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>SpeedSlider</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>SpeedLabel</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>545</x>
-     <y>129</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>470</x>
-     <y>129</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>

@@ -20,6 +20,8 @@ class qt_ui(QtWidgets.QDialog):
 
         self.startButton.clicked.connect(self.start_simulation)
         self.stopButton.clicked.connect(self.stop_simulation)
+        self.SpeedSlider.valueChanged.connect(self.update)
+        self.SunMassSlider.valueChanged.connect(self.update)
 
         #self.SpeedLabel.valuechanged.connect(self.update())
         self.renderer_conn, self.simulation_conn = None, None
@@ -27,13 +29,21 @@ class qt_ui(QtWidgets.QDialog):
         self.simulation_process = None
 
     def update(self):
-        self.SpeedLabel.value = self.SpeedSlider.value
-        self.SunMassLabel.value = self.SunMassSlider.value
+        #self.SpeedLabel.value = self.SpeedSlider.value()
+        #self.SunMassLabel.value = self.SpeedSlider.value()
+        self.SpeedLabel.setText(str(self.SpeedSlider.value()/10))
+        self.SunMassLabel.setText(str(self.SunMassSlider.value()/10))
 
     def start_simulation(self):
         """
             Start simulation and render process connected with a pipe.
         """
+
+        self.body_list[0].mass =self.body_list[0].mass*self.SunMassSlider.value()/10
+
+        for body in self.body_list:
+            body.velocity = body.velocity*self.SpeedSlider.value()/10
+
         self.renderer_conn, self.simulation_conn = multiprocessing.Pipe()
         self.simulation_process = \
             multiprocessing.Process(target=opengl_simulation.startup,
