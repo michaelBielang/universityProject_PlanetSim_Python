@@ -56,6 +56,12 @@ def startup(sim_pipe, bodies_list):
 
     bodies = None
 
+    # Whithout FPS lock
+    #import threading
+    #thread = threading.Thread(target=s.sim_calc_loop, args=(bodies_list,70000))
+    #thread.daemon = True                            # Daemonize thread
+    #thread.start()                                  # Start the execution
+
     while True:
         if sim_pipe.poll():
             message = sim_pipe.recv()
@@ -63,7 +69,13 @@ def startup(sim_pipe, bodies_list):
                 print('simulation exiting ...')
                 sys.exit(0)
 
-        s.sim_calc(bodies_list,70000)
+        # Whit FPS lock
+        import threading
+        thread = threading.Thread(target=s.sim_calc, args=(bodies_list,70000))
+        thread.daemon = True                            # Daemonize thread
+        thread.start()
+
+    #s.sim_calc(bodies_list,70000)
 
         bodies = _move_bodies(bodies,bodies_list)
 

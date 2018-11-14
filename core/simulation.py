@@ -30,3 +30,7 @@ def sim_calc(bodies, timestep):
 
     for body in bodies:
         calc.calculate_and_set_new_pos(body, timestep)
+
+def sim_calc_loop(bodies,timestep):
+    while True:
+        sim_calc(bodies,timestep)
