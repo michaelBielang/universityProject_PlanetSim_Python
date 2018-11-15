@@ -1,12 +1,15 @@
+"""QT_GUI"""
+
+import sys
+import multiprocessing
 from PyQt5 import QtWidgets, uic
-import sys, multiprocessing
 
 from gui import opengl_simulation
 from gui.galaxy_renderer import galaxy_renderer
 
 
 class qt_ui(QtWidgets.QDialog):
-    def __init__(self,body_list):
+    def __init__(self, body_list):
         self.body_list = body_list
 
         super(qt_ui, self).__init__()
@@ -23,14 +26,14 @@ class qt_ui(QtWidgets.QDialog):
         self.SpeedSlider.valueChanged.connect(self.update)
         self.SunMassSlider.valueChanged.connect(self.update)
 
-        #self.SpeedLabel.valuechanged.connect(self.update())
+        # self.SpeedLabel.valuechanged.connect(self.update())
         self.renderer_conn, self.simulation_conn = None, None
         self.render_process = None
         self.simulation_process = None
 
     def update(self):
-        #self.SpeedLabel.value = self.SpeedSlider.value()
-        #self.SunMassLabel.value = self.SpeedSlider.value()
+        # self.SpeedLabel.value = self.SpeedSlider.value()
+        # self.SunMassLabel.value = self.SpeedSlider.value()
         self.SpeedLabel.setText(str(self.SpeedSlider.value()/10))
         self.SunMassLabel.setText(str(self.SunMassSlider.value()/10))
 
@@ -39,7 +42,7 @@ class qt_ui(QtWidgets.QDialog):
             Start simulation and render process connected with a pipe.
         """
 
-        self.body_list[0].mass =self.body_list[0].mass*self.SunMassSlider.value()/10
+        self.body_list[0].mass = self.body_list[0].mass * self.SunMassSlider.value()/10
 
         for body in self.body_list:
             body.velocity = body.velocity*self.SpeedSlider.value()/10
@@ -75,13 +78,11 @@ class qt_ui(QtWidgets.QDialog):
         self.stop_simulation()
         self.close()
 
-
-if __name__ == '__main__':
-    import core.simulation as s
-    body_list = s.initialize()
-    app = QtWidgets.QApplication(sys.argv)
-    simulation_gui = qt_ui(body_list)
-    simulation_gui.show()
-    sys.exit(app.exec_())
-
-
+#
+# if __name__ == '__main__':
+#    import core.simulation as s
+#    body_list = s.initialize()
+#    app = QtWidgets.QApplication(sys.argv)
+#    simulation_gui = qt_ui(body_list)
+#    simulation_gui.show()
+#    sys.exit(app.exec_())

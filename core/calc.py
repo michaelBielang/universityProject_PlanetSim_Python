@@ -1,3 +1,5 @@
+"""Module for calculation"""
+
 import numpy as np
 
 # The gravitational constant G
@@ -15,7 +17,8 @@ def calculate_and_set_new_velocity(subject, bodies, timestep):
                                       + distance_vector.item(1)**2
                                       + distance_vector.item(2)**2)
 
-            # Only calculate force if bodies not on same position (divide by zero)
+            # Only calculate force if bodies not on same position
+            # (divide by zero)
             if distance_length is not 0.0:
                 # calculate gravity force
                 f_total = G * subject.mass*other.mass/(distance_length**2)
@@ -28,8 +31,8 @@ def calculate_and_set_new_velocity(subject, bodies, timestep):
     subject.velocity += acc*timestep
 
 
-def calculate_and_set_new_pos(subject, timeStep):
+def calculate_and_set_new_pos(subject, timestep):
     """Moves planet with current velocity and given timestep."""
 
     # position += velocity*timestep
-    subject.position += subject.velocity*timeStep
+    subject.position += subject.velocity*timestep

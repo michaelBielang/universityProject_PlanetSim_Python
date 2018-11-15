@@ -1,4 +1,4 @@
-import numpy as np
+"""Holds variables for the simulation."""
 
 
 class Body:
@@ -11,7 +11,7 @@ class Body:
     """
     SCALE_FACTOR = 150 * 10 ** 9
 
-    def __init__(self, name, mass, position, velocity,radius):
+    def __init__(self, name, mass, position, velocity, radius):
         """Initialize Body
 
         Parameter:
