@@ -1,5 +1,6 @@
 from core.body import *
 import core.calc as calc
+import numpy as np
 
 
 def initialize():
