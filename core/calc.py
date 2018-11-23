@@ -30,6 +30,8 @@ def calculate_and_set_new_velocity(subject, bodies, timestep):
     # velocity += acceleration*timestep
     subject.velocity += acc*timestep
 
+    subject.position += subject.velocity*timestep
+
 
 def calculate_and_set_new_pos(subject, timestep):
     """Moves planet with current velocity and given timestep."""

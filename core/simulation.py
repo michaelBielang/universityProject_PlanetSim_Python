@@ -1,6 +1,10 @@
+import copy
+
 from core.body import *
 import core.calc as calc
 import numpy as np
+import multiprocessing
+from threading import Thread
 
 
 def initialize():
@@ -22,15 +26,49 @@ def initialize():
     bodies.append(earth2)
     bodies.append(earth3)
 
+
     return bodies
+
+def chunks(l, n):
+    # For item i in a range that is a length of l,
+    for i in range(0, len(l), n):
+        # Create an index range for l of n items:
+        yield l[i:i+n]
+
+#def sim_calc_setup(self,bodies):
+
+    #Cores allready used Gui + Main Thread
+
 
 
 def sim_calc(bodies, timestep):
-    for body in bodies:
-        calc.calculate_and_set_new_velocity(body, bodies, timestep)
 
-    for body in bodies:
-        calc.calculate_and_set_new_pos(body, timestep)
+    # Minus current Thread
+    free_cores = multiprocessing.cpu_count() -1
+    #ree_cores = 1 # Just for Profiling
+    threads = []
+    objects = copy.deepcopy(bodies)
+
+
+    for partial_list in chunks(objects,free_cores):
+        threads.append(Thread(target=sim_calc_partitial, args=(partial_list,bodies, 70000)))
+
+    for s in threads:
+        s.start()
+
+    for thread in threads:
+        thread.join()
+
+
+    #calc.calculate_and_set_new_velocity(body, bodies, timestep)
+
+    #for body in bodies:
+    #    calc.calculate_and_set_new_pos(body, timestep)
+
+def sim_calc_partitial(subject,bodies,timestep):
+
+    for subject in bodies:
+        calc.calculate_and_set_new_velocity(subject,bodies,timestep)
 
 def sim_calc_loop(bodies,timestep):
     while True:

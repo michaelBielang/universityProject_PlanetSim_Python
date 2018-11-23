@@ -66,6 +66,12 @@ def startup(sim_pipe, bodies_list):
     # thread.daemon = True                            # Daemonize thread
     # thread.start()                                  # Start the execution
 
+    #import cProfile
+    #pr = cProfile.Profile()
+    #pr.enable()
+
+    test_int = 0
+
     while True:
         if sim_pipe.poll():
             message = sim_pipe.recv()
@@ -74,13 +80,24 @@ def startup(sim_pipe, bodies_list):
                 sys.exit(0)
 
         # Whit FPS lock
-        import threading
-        thread = threading.Thread(target=s.sim_calc, args=(bodies_list, 70000))
-        thread.daemon = True                            # Daemonize thread
-        thread.start()
+        #import threading
+        #thread = threading.Thread(target=s.sim_calc, args=(bodies_list, 70000))
+        #thread.daemon = True                            # Daemonize thread
+        #thread.start()
+        #thread.join()
 
-    # s.sim_calc(bodies_list,70000)
+        test_int += 1
+
+        #if (test_int == 200):
+        #    break
+
+        #s.sim_calc_setup(self=s,bodies=bodies_list)
+        s.sim_calc(bodies_list,70000)
+
 
         bodies = _move_bodies(bodies, bodies_list)
 
         sim_pipe.send(bodies)
+
+    pr.disable()
+    pr.print_stats(sort='time')
