@@ -1,4 +1,5 @@
 import copy
+import configparser
 
 from core.body import *
 import core.calc as calc
@@ -9,22 +10,18 @@ from threading import Thread
 
 def initialize():
     bodies = list()
-    sun = Body(name="sun", mass=1.989 * 10**30, radius=0.2,
-               position=np.array([0.0, 0.0, 0.0]),
-               velocity=np.array([0.0, 0.0, 0.0]))
-    earth = Body(name="earth", mass=5.972 * 10**24,
-                 position=np.array([- 149.6 * 10**9, 0.0, 0.0]), radius=0.1,
-                 velocity=np.array([0.0, 29800.0, 0.0]))
-    earth2 = Body(name="earth", mass=5.972 * 10**24,
-                  position=np.array([- 100.6 * 10**9, 0.0, 0.0]), radius=0.1,
-                  velocity=np.array([0.0, 26800.0, 0.0]))
-    earth3 = Body(name="earth", mass=5.972 * 10**24,
-                  position=np.array([145.6 * 10**9, 0.0, 0.0]), radius=0.1,
-                  velocity=np.array([0.0, 29800.0, 0.0]))
-    bodies.append(sun)
-    bodies.append(earth)
-    bodies.append(earth2)
-    bodies.append(earth3)
+
+    conf = configparser.ConfigParser()
+    conf.read("config.ini")
+    for section in conf.sections():
+        name = conf[section]['name']
+        mass = float(conf[section]['mass'])
+        radius = float(conf[section]['radius'])
+        pos = np.array([float(conf[section]['xPos']), float(conf[section]['yPos']), float(conf[section]['zPos'])])
+        vel = np.array([float(conf[section]['xVel']), float(conf[section]['yVel']), float(conf[section]['zVel'])])
+        body = Body(name=name, mass=mass, radius=radius, position=pos, velocity=vel)
+        bodies.append(body)
+
     return bodies
 
 def chunks(l, n):
@@ -47,9 +44,9 @@ def sim_calc(bodies, timestep):
 
     if(free_cores != 1):
         for partial_list in chunks(objects,free_cores):
-            threads.append(Thread(target=sim_calc_partitial, args=(partial_list,bodies, 70000,results)))
+            threads.append(Thread(target=sim_calc_partitial, args=(partial_list,bodies, timestep,results)))
     else:
-        threads.append(Thread(target=sim_calc_partitial, args=(bodies,bodies, 70000,results)))
+        threads.append(Thread(target=sim_calc_partitial, args=(bodies,bodies, timestep,results)))
 
     for s in threads:
         s.start()

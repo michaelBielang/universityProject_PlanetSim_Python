@@ -9,7 +9,7 @@ class Body:
     vx, vy: x, y velocities in m/s
     px, py: x, y positions in m
     """
-    SCALE_FACTOR = 150 * 10 ** 9
+    SCALE_FACTOR = 4500 * 10 ** 9
 
     def __init__(self, name, mass, position, velocity, radius):
         """Initialize Body
