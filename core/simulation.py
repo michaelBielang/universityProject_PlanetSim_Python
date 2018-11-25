@@ -25,33 +25,31 @@ def initialize():
     bodies.append(earth)
     bodies.append(earth2)
     bodies.append(earth3)
-
-
     return bodies
 
 def chunks(l, n):
     # For item i in a range that is a length of l,
+    if (n == 1):
+        return l
     for i in range(0, len(l), n):
         # Create an index range for l of n items:
         yield l[i:i+n]
-
-#def sim_calc_setup(self,bodies):
-
-    #Cores allready used Gui + Main Thread
-
-
 
 def sim_calc(bodies, timestep):
 
     # Minus current Thread
     free_cores = multiprocessing.cpu_count() -1
-    #ree_cores = 1 # Just for Profiling
+    #free_cores = 1 # Just for Profiling
     threads = []
-    objects = copy.deepcopy(bodies)
+    results = []
+    #objects = copy.deepcopy(bodies)
+    objects = bodies
 
-
-    for partial_list in chunks(objects,free_cores):
-        threads.append(Thread(target=sim_calc_partitial, args=(partial_list,bodies, 70000)))
+    if(free_cores != 1):
+        for partial_list in chunks(objects,free_cores):
+            threads.append(Thread(target=sim_calc_partitial, args=(partial_list,bodies, 70000,results)))
+    else:
+        threads.append(Thread(target=sim_calc_partitial, args=(bodies,bodies, 70000,results)))
 
     for s in threads:
         s.start()
@@ -59,17 +57,21 @@ def sim_calc(bodies, timestep):
     for thread in threads:
         thread.join()
 
+    for current_cody in range(len(bodies)):
+        bodies[current_cody] = results[current_cody]
+
+
+
 
     #calc.calculate_and_set_new_velocity(body, bodies, timestep)
 
     #for body in bodies:
     #    calc.calculate_and_set_new_pos(body, timestep)
 
-def sim_calc_partitial(subject,bodies,timestep):
+def sim_calc_partitial(partial_list,bodies,timestep,results):
 
-    for subject in bodies:
-        calc.calculate_and_set_new_velocity(subject,bodies,timestep)
+    for subject in partial_list:
+        results.append(calc.calculate_and_set_new_velocity(subject,bodies,timestep))
 
-def sim_calc_loop(bodies,timestep):
-    while True:
-        sim_calc(bodies,timestep)
+
+

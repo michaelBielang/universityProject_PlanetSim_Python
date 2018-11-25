@@ -65,6 +65,7 @@ class GalaxyRenderer:
         GLUT.glutDisplayFunc(self.render)
         GLUT.glutIdleFunc(self.update_positions)
 
+
     def init_gl(self):
         """
             Initialise OpenGL settings
