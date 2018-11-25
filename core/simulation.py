@@ -1,4 +1,8 @@
 import copy
+import functools
+from itertools import chain
+from multiprocessing import Process
+from multiprocessing.pool import Pool
 
 from core.body import *
 import core.calc as calc
@@ -37,41 +41,27 @@ def chunks(l, n):
 
 def sim_calc(bodies, timestep):
 
-    # Minus current Thread
-    free_cores = multiprocessing.cpu_count() -1
-    #free_cores = 1 # Just for Profiling
-    threads = []
-    results = []
-    #objects = copy.deepcopy(bodies)
-    objects = bodies
+    free_cores = multiprocessing.cpu_count()
+    p = Pool(processes=free_cores-1)
+    partial_function = functools.partial(sim_calc_partitial,bodies=bodies,timestep=70000)
+    data = p.map(partial_function, list(chunks(bodies,free_cores)))
+    p.close()
+    #p.join()
 
-    if(free_cores != 1):
-        for partial_list in chunks(objects,free_cores):
-            threads.append(Thread(target=sim_calc_partitial, args=(partial_list,bodies, 70000,results)))
-    else:
-        threads.append(Thread(target=sim_calc_partitial, args=(bodies,bodies, 70000,results)))
-
-    for s in threads:
-        s.start()
-
-    for thread in threads:
-        thread.join()
+    # We need to reassemble the list of sublists
+    result = []
+    for i in data:
+        result += i
 
     for current_cody in range(len(bodies)):
-        bodies[current_cody] = results[current_cody]
+        bodies[current_cody] = result[current_cody]
 
 
-
-
-    #calc.calculate_and_set_new_velocity(body, bodies, timestep)
-
-    #for body in bodies:
-    #    calc.calculate_and_set_new_pos(body, timestep)
-
-def sim_calc_partitial(partial_list,bodies,timestep,results):
-
+def sim_calc_partitial(partial_list,bodies,timestep):
+    result = []
     for subject in partial_list:
-        results.append(calc.calculate_and_set_new_velocity(subject,bodies,timestep))
+        result.append(calc.calculate_and_set_new_velocity(subject,bodies,timestep))
+    return result
 
 
 
