@@ -59,13 +59,6 @@ def startup(sim_pipe, bodies_list):
 
     bodies = None
 
-    # Whithout FPS lock
-    # import threading
-    # thread = threading.Thread(target=s.sim_calc_loop,
-    #           args=(bodies_list,70000))
-    # thread.daemon = True                            # Daemonize thread
-    # thread.start()                                  # Start the execution
-
     #import cProfile
     #pr = cProfile.Profile()
     #pr.enable()
@@ -79,14 +72,7 @@ def startup(sim_pipe, bodies_list):
                 print('simulation exiting ...')
                 sys.exit(0)
 
-        # Whit FPS lock
-        #import threading
-        #thread = threading.Thread(target=s.sim_calc, args=(bodies_list, 70000))
-        #thread.daemon = True                            # Daemonize thread
-        #thread.start()
-        #thread.join()
-
-        test_int += 1
+        #test_int += 1
 
         #if (test_int == 200):
         #    break
@@ -99,5 +85,5 @@ def startup(sim_pipe, bodies_list):
 
         sim_pipe.send(bodies)
 
-    pr.disable()
-    pr.print_stats(sort='time')
+    #pr.disable()
+    #pr.print_stats(sort='time')
