@@ -1,38 +1,46 @@
 """Module for calculation"""
-
+import math
 import numpy as np
 
 # The gravitational constant G
 G = 6.67428e-11
 
 
-def calculate_and_set_new_velocity(subject, bodies, timestep):
+def calc_inital_velocity(body, context):
+    z = np.array([0.0,0.0,1.0])
+
+    # get the center of mass
+    pos_mass_centre =  sum([b.mass * b.position for b in context.bodies if b is not body]) / (context.mass_all - body.mass)
+
+    # get distance from current body from center
+    body_distance = body.position - pos_mass_centre
+    body_distance_length = np.sqrt(body_distance.item(0)**2 + body_distance.item(1) ** 2 + body_distance.item(2) ** 2)
+
+    body_distance_z = body_distance * z
+    body_distance_length_z = np.sqrt(body_distance_z.item(0)**2 + body_distance_z.item(1) ** 2 + body_distance_z.item(2) ** 2)
+
+    mass_dif = context.mass_all - body.mass
+    veloccity = (mass_dif / context.mass_all) * math.sqrt(G * context.mass_all / body_distance_length)
+    return  (body_distance * z / body_distance_length_z) * veloccity
+
+
+def calculate_velocity(planet, other):
     """Set velocity based on every planet in the system."""
     acc = np.array([0.0, 0.0, 0.0])
 
-    for other in bodies:
-        if other is not subject:
-            distance_vector = other.position - subject.position
-            distance_length = np.sqrt(distance_vector.item(0)**2
-                                      + distance_vector.item(1)**2
-                                      + distance_vector.item(2)**2)
+    distance_vector = other.position - planet.position
+    distance_length = np.sqrt(distance_vector.item(0)**2
+                              + distance_vector.item(1)**2
+                              + distance_vector.item(2)**2)
 
-            # Only calculate force if bodies not on same position
-            # (divide by zero)
-            if distance_length is not 0.0:
-                # calculate gravity force
-                f_total = G * subject.mass*other.mass/(distance_length**2)
-                f_vector = (distance_vector/distance_length)*f_total
+    # Only calculate force if bodies not on same position
+    # (divide by zero)
+    if distance_length is not 0.0:
+        # calculate gravity force
+        f_total = G * planet.mass*other.mass/(distance_length**2)
+        f_vector = (distance_vector/distance_length)*f_total
 
-                # F=m/a -> a=F/m
-                acc += f_vector/subject.mass
+        # F=m/a -> a=F/m
+        acc += f_vector/planet.mass
 
-    # velocity += acceleration*timestep
-    subject.velocity += acc*timestep
-
-
-def calculate_and_set_new_pos(subject, timestep):
-    """Moves planet with current velocity and given timestep."""
-
-    # position += velocity*timestep
-    subject.position += subject.velocity*timestep
+    return acc;

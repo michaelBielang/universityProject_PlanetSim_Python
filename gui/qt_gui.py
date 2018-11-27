@@ -9,8 +9,8 @@ from gui.galaxy_renderer import galaxy_renderer
 
 
 class qt_ui(QtWidgets.QDialog):
-    def __init__(self, body_list):
-        self.body_list = body_list
+    def __init__(self, context):
+        self.context = context
 
         super(qt_ui, self).__init__()
         import os
@@ -42,15 +42,13 @@ class qt_ui(QtWidgets.QDialog):
             Start simulation and render process connected with a pipe.
         """
 
-        self.body_list[0].mass = self.body_list[0].mass * self.SunMassSlider.value()/10
-
-        for body in self.body_list:
-            body.velocity = body.velocity*self.SpeedSlider.value()/10
+        self.context.add_body_mass(0, self.SunMassSlider.value()/10)
+        #self.context.add_speed(self.SpeedSlider.value()/10)
 
         self.renderer_conn, self.simulation_conn = multiprocessing.Pipe()
         self.simulation_process = \
             multiprocessing.Process(target=opengl_simulation.startup,
-                                    args=(self.simulation_conn, self.body_list))
+                                    args=(self.simulation_conn, self.context))
         self.render_process = \
             multiprocessing.Process(target=galaxy_renderer.startup,
                                     args=(self.renderer_conn, 60), )

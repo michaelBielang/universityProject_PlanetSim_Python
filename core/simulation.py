@@ -1,37 +1,42 @@
 from core.body import *
 import core.calc as calc
+import core.context as _context
 import numpy as np
 
+from planetensimulation_progr3gr10.core import context
 
-def initialize():
+
+def __initialize():
     bodies = list()
-    sun = Body(name="sun", mass=1.989 * 10**30, radius=0.2,
-               position=np.array([0.0, 0.0, 0.0]),
-               velocity=np.array([0.0, 0.0, 0.0]))
-    earth = Body(name="earth", mass=5.972 * 10**24,
-                 position=np.array([- 149.6 * 10**9, 0.0, 0.0]), radius=0.1,
-                 velocity=np.array([0.0, 29800.0, 0.0]))
-    earth2 = Body(name="earth", mass=5.972 * 10**24,
-                  position=np.array([- 100.6 * 10**9, 0.0, 0.0]), radius=0.1,
-                  velocity=np.array([0.0, 26800.0, 0.0]))
-    earth3 = Body(name="earth", mass=5.972 * 10**24,
-                  position=np.array([145.6 * 10**9, 0.0, 0.0]), radius=0.1,
-                  velocity=np.array([0.0, 29800.0, 0.0]))
-    bodies.append(sun)
-    bodies.append(earth)
-    bodies.append(earth2)
-    bodies.append(earth3)
+    sun = Body(name="sun", mass=1.989 * 10**15, radius=0.2)
+    earth = Body(name="earth", mass=5.972 * 10**9, radius=0.01)
+    earth2 = Body(name="earth", mass=5.972 * 10**9, radius=0.01)
+    earth3 = Body(name="earth", mass=5.972 * 10**9, radius=0.01)
 
-    return bodies
+    c = context.context(sun);
+    c.add(sun)
+    c.add(earth)
+    c.add(earth2)
+    c.add(earth3)
+    c.init(- 149.6 * 10**3, 149.6 * 10**3)
+
+    return c
+
+def initialize(num_planet):
+    sun = Body(name="sun", mass=1.989 * 10 ** 30, radius=0.2)
+    c = context.context(sun)
+    c.add(sun)
+    for i in range(num_planet):
+        planet = Body(name="earth", mass=5.972 * 10**24, radius=0.05)
+        c.add(planet)
+
+    c.init(- 149.6 * 10**9, 149.6 * 10**9)
+    return c
+
+def sim_calc(context, timestep):
+    context.update(timestep)
 
 
-def sim_calc(bodies, timestep):
-    for body in bodies:
-        calc.calculate_and_set_new_velocity(body, bodies, timestep)
-
-    for body in bodies:
-        calc.calculate_and_set_new_pos(body, timestep)
-
-def sim_calc_loop(bodies,timestep):
+def sim_calc_loop(context,timestep):
     while True:
-        sim_calc(bodies,timestep)
+        sim_calc(context,timestep)

@@ -46,7 +46,7 @@ def _move_bodies(bodies, bodies_list):
     return bodies
 
 
-def startup(sim_pipe, bodies_list):
+def startup(sim_pipe, context):
     """
     Initialise and continuously update a position list.
     Results are sent through a pipe after each update step
@@ -75,12 +75,12 @@ def startup(sim_pipe, bodies_list):
 
         # Whit FPS lock
         import threading
-        thread = threading.Thread(target=s.sim_calc, args=(bodies_list, 70000))
+        thread = threading.Thread(target=s.sim_calc, args=(context, 70000))
         thread.daemon = True                            # Daemonize thread
         thread.start()
 
     # s.sim_calc(bodies_list,70000)
 
-        bodies = _move_bodies(bodies, bodies_list)
+        bodies = _move_bodies(bodies, context.bodies)
 
         sim_pipe.send(bodies)
