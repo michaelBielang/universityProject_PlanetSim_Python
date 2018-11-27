@@ -68,6 +68,7 @@ def sim_calc(bodies, timestep):
 def sim_calc_partitial(partial_list,bodies,timestep,results):
 
     for subject in partial_list:
+        import cProfile
         results.append(calc.calculate_and_set_new_velocity(subject,bodies,timestep))
 
 

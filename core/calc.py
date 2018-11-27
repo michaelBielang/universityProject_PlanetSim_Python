@@ -2,6 +2,7 @@
 
 import numpy as np
 import copy
+import core.body
 
 # The gravitational constant G
 G = 6.67428e-11
@@ -9,8 +10,8 @@ G = 6.67428e-11
 
 def calculate_and_set_new_velocity(subject, bodies, timestep):
     """Set velocity based on every planet in the system."""
-    acc = np.zeros(3)
 
+    acc = np.zeros(3)
 
     for other in bodies:
         if other is not subject:
@@ -29,8 +30,8 @@ def calculate_and_set_new_velocity(subject, bodies, timestep):
                 # F=m/a -> a=F/m
                 acc += f_vector/subject.mass
 
-
-    subject_return = copy.deepcopy(subject)
+    subject_return = core.body.Body(subject.name,subject.mass,np.copy(subject.position), subject.velocity,subject.radius)
+    #subject_return = copy.deepcopy(subject)
 
     # velocity += acceleration*timestep
     subject_return.velocity += acc*timestep
