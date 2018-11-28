@@ -39,10 +39,10 @@ def _move_bodies(bodies, bodies_list):
     for body_index in range(bodies_list.__len__()):
         bodies[body_index] = np.append(bodies_list[body_index].position
               / bodies_list[body_index].SCALE_FACTOR,
-              0.01)#bodies_list[body_index].radius)
+              bodies_list[body_index].radius)
 
     # ToDo is sleep nessesary? Maybe not (or yes for Performance Resons)
-    #time.sleep(1/__FPS)
+    time.sleep(1/__FPS)
     return bodies
 
 
