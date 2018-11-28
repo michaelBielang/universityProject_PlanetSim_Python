@@ -1,23 +1,31 @@
+import configparser
 from core.body import *
+import core.calc as calc
+import numpy as np
 from core.context import context
 
-def __initialize():
+
+def initialize():
     bodies = list()
-    sun = Body(name="sun", mass=1.989 * 10**15, radius=0.2)
-    earth = Body(name="earth", mass=5.972 * 10**9, radius=0.01)
-    earth2 = Body(name="earth", mass=5.972 * 10**9, radius=0.01)
-    earth3 = Body(name="earth", mass=5.972 * 10**9, radius=0.01)
 
-    c = context.context(sun);
-    c.add(sun)
-    c.add(earth)
-    c.add(earth2)
-    c.add(earth3)
-    c.init(- 149.6 * 10**3, 149.6 * 10**3)
+    c = context()
+    conf = configparser.ConfigParser()
+    conf.read("config.ini")
+    for section in conf.sections():
+        name = conf[section]['name']
+        mass = float(conf[section]['mass'])
+        radius = float(conf[section]['radius'])
+        pos = np.array([float(conf[section]['xPos']), float(conf[section]['yPos']), float(conf[section]['zPos'])])
+        vel = np.array([float(conf[section]['xVel']), float(conf[section]['yVel']), float(conf[section]['zVel'])])
+        body = Body(name=name, mass=mass, radius=radius)
+        body.position = pos
+        body.velocity = vel
+        c.add(body)
 
+    c.centre = c.bodies[0]
     return c
 
-def initialize(num_planet):
+def initialize_random(num_planet):
     sun = Body(name="sun", mass=1.989 * 10 ** 30, radius=0.2)
     c = context(sun)
     c.add(sun)
@@ -27,6 +35,11 @@ def initialize(num_planet):
 
     c.init(- 149.6 * 10**9, 149.6 * 10**9)
     return c
+
+
+def sim_calc(bodies, timestep):
+    for body in bodies:
+        calc.calculate_and_set_new_velocity(body, bodies, timestep)
 
 def sim_calc(context, timestep):
     context.update(timestep)

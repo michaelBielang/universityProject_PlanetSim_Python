@@ -3,7 +3,7 @@ import numpy as np
 
 
 class context:
-    def __init__(self, centre):
+    def __init__(self, centre=None):
         self.bodies = []
         self.mass_all = 0.0
         self.centre = centre

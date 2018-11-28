@@ -26,7 +26,8 @@ def calc_inital_velocity(body, context):
 
 def calculate_velocity(planet, other):
     """Set velocity based on every planet in the system."""
-    acc = np.array([0.0, 0.0, 0.0])
+
+    acc = np.zeros(3)
 
     distance_vector = other.position - planet.position
     distance_length = np.sqrt(distance_vector.item(0)**2

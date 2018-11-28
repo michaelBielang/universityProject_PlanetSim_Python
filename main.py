@@ -14,7 +14,7 @@ from gui.qt_gui import qt_ui
 
 def main():
     """main function"""
-    context = s.initialize(5)
+    context = s.initialize_random(5)
     app = QtWidgets.QApplication(sys.argv)
     simulation_gui = qt_ui(context)
     simulation_gui.show()
