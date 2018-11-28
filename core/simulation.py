@@ -1,10 +1,5 @@
 from core.body import *
-import core.calc as calc
-import core.context as _context
-import numpy as np
-
-from planetensimulation_progr3gr10.core import context
-
+from core.context import context
 
 def __initialize():
     bodies = list()
@@ -24,7 +19,7 @@ def __initialize():
 
 def initialize(num_planet):
     sun = Body(name="sun", mass=1.989 * 10 ** 30, radius=0.2)
-    c = context.context(sun)
+    c = context(sun)
     c.add(sun)
     for i in range(num_planet):
         planet = Body(name="earth", mass=5.972 * 10**24, radius=0.05)

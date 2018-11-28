@@ -1,5 +1,4 @@
 from core import calc
-import random
 import numpy as np
 
 
