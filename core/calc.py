@@ -36,8 +36,7 @@ def calculate_velocity(planet, other):
 
     # Only calculate force if bodies not on same position
     # (divide by zero)
-    # Use acc because it is full of Zeros for Speed
-    if np.equal(distance_length,acc):
+    if distance_length != 0.0:
         # calculate gravity force
         f_total = G * planet[6]*other[6]/(distance_length**2)
         f_vector = (distance_vector/distance_length)*f_total

@@ -33,7 +33,7 @@ class context:
                 if np.array_equal(planet,other):
                     continue
                 a = calc.calculate_velocity(planet, other)
-                planet.velocity += timeStep * a
+                planet[3:6]= planet[3:6] +  (a * timeStep)
 
         for planet in self.np_bodies:
             """Moves planet with current velocity and given timestep."""
