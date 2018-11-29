@@ -11,16 +11,17 @@ def initialize():
     c = context()
     conf = configparser.ConfigParser()
     conf.read("config.ini")
+    i = 0
     for section in conf.sections():
         name = conf[section]['name']
         mass = float(conf[section]['mass'])
         radius = float(conf[section]['radius'])
         pos = np.array([float(conf[section]['xPos']), float(conf[section]['yPos']), float(conf[section]['zPos'])])
         vel = np.array([float(conf[section]['xVel']), float(conf[section]['yVel']), float(conf[section]['zVel'])])
-        body = Body(name=name, mass=mass, radius=radius)
-        body.position = pos
-        body.velocity = vel
-        c.add(body)
+        c.add(i, mass=mass, radius=radius)
+        c.np_bodies[i][0:3] = pos
+        c.np_bodies[i][3:6] = vel
+        i += 1
 
     c.centre = c.bodies[0]
     return c
