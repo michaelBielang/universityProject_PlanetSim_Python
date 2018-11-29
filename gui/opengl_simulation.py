@@ -66,6 +66,16 @@ def startup(sim_pipe, context):
     # thread.daemon = True                            # Daemonize thread
     # thread.start()                                  # Start the execution
 
+    # NP Array is defind like this np_array[0:3] is the x,y,z position,
+    # np_arry[3:6] is the Velocity, np_array[7] is the mass, np_arry[8] is the radius
+    np_array = np.zeros((context.bodies.__len__(), 8), dtype=np.float64)
+    for i in range(context.bodies.__len__()):
+        temp = np.append(context.bodies[i].position,context.bodies[i].velocity)
+        temp = np.append(temp,context.bodies[i].mass)
+        temp = np.append(temp,context.bodies[i].radius)
+        np_array[i] = temp
+    context.np_array = np_array
+
     while True:
         if sim_pipe.poll():
             message = sim_pipe.recv()
@@ -74,11 +84,12 @@ def startup(sim_pipe, context):
                 sys.exit(0)
 
         # Whit FPS lock
-        import threading
-        thread = threading.Thread(target=s.sim_calc, args=(context, 70000))
-        thread.daemon = True                            # Daemonize thread
-        thread.start()
+        #import threading
+        #thread = threading.Thread(target=s.sim_calc, args=(context, 70000))
+        #thread.daemon = True                            # Daemonize thread
+        #thread.start()
 
+        s.sim_calc(context,70000)
     # s.sim_calc(bodies_list,70000)
 
         bodies = _move_bodies(bodies, context.bodies)

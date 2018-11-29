@@ -7,6 +7,7 @@ class context:
         self.bodies = []
         self.mass_all = 0.0
         self.centre = centre
+        self.context = []
 
     def add(self, body):
         self.bodies.append(body)
@@ -27,17 +28,16 @@ class context:
 
 
     def update(self, timeStep):
-        for planet in self.bodies:
-            for other in self.bodies:
-                if other is planet:
+        for planet in self.np_array:
+            for other in self.np_array:
+                if np.array_equal(planet,other):
                     continue
-
                 a = calc.calculate_velocity(planet, other)
                 planet.velocity += timeStep * a
 
-        for planet in self.bodies:
+        for planet in self.np_array:
             """Moves planet with current velocity and given timestep."""
-            planet.position += timeStep * planet.velocity
+            planet[0:3] += timeStep * planet[3:6]
 
     def add_body_mass(self, _body, mass):
         body = self.bodies[_body]
