@@ -10,7 +10,7 @@ class context:
 
     def add(self, i, mass, radius):
         # NP Array is defind like this np_array[0:3] is the x,y,z position,
-        # np_arry[3:6] is the Velocity, np_array[7] is the mass, np_arry[8] is the radius
+        # np_arry[3:6] is the Velocity, np_array[6] is the mass, np_arry[7] is the radius
         temp = np.append(np.zeros(3),np.zeros(3))
         temp = np.append(temp, mass)
         temp = np.append(temp, radius)
@@ -33,7 +33,7 @@ class context:
                 if np.array_equal(planet,other):
                     continue
                 a = calc.calculate_velocity(planet, other)
-                planet[3:6]= planet[3:6] +  (a * timeStep)
+                planet[3:6]= planet[3:6] + timeStep * a
 
         for planet in self.np_bodies:
             """Moves planet with current velocity and given timestep."""
@@ -41,12 +41,12 @@ class context:
 
     def add_body_mass(self, i, mass):
         body = self.np_bodies[i]
-        body[7] = body[7] * mass
+        body[6] = body[6] * mass
 
 
     def __calc_mass_all(self):
         m = 0
         for planet in self.np_bodies:
-            m += planet[7]
+            m += planet[6]
 
         return m

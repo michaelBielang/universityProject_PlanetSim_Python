@@ -10,17 +10,23 @@ def calc_inital_velocity(body, context):
     z = np.array([0.0,0.0,1.0])
 
     # get the center of mass
-    pos_mass_centre =  sum([b[7] * b[0:3] for b in context.bodies if b is not body]) / (context.mass_all - body[7])
+    pos_mass_centre =  sum([b[6] * b[0:3] for b in context.np_bodies if not np.array_equal(b, body)]) \
+                       / (context.mass_all - body[6])
 
     # get distance from current body from center
     body_distance = body[0:3] - pos_mass_centre
-    body_distance_length = np.sqrt(body_distance.item(0)**2 + body_distance.item(1) ** 2 + body_distance.item(2) ** 2)
+    body_distance_length = np.sqrt(body_distance.item(0)**2
+                                   + body_distance.item(1) ** 2
+                                   + body_distance.item(2) ** 2)
 
     body_distance_z = body_distance * z
-    body_distance_length_z = np.sqrt(body_distance_z.item(0)**2 + body_distance_z.item(1) ** 2 + body_distance_z.item(2) ** 2)
+    body_distance_length_z = np.sqrt(body_distance_z.item(0)**2
+                                     + body_distance_z.item(1) ** 2
+                                     + body_distance_z.item(2) ** 2)
 
-    mass_dif = context.mass_all - body[7]
-    veloccity = (mass_dif / context.mass_all) * math.sqrt(G * context.mass_all / body_distance_length)
+    mass_dif = context.mass_all - body[6]
+    veloccity = (mass_dif / context.mass_all) * \
+                math.sqrt(G * context.mass_all / body_distance_length)
     return  (body_distance * z / body_distance_length_z) * veloccity
 
 

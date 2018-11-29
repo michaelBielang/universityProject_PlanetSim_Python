@@ -29,8 +29,8 @@ def initialize_random(num_planet):
 
     c = context(num_planet + 1)
     c.add(i=0, mass=1.989 * 10 ** 30, radius=0.2) # Sonne
-    for i in range(num_planet):
-        c.add(i=0, mass=5.972 * 10**24, radius=0.05)
+    for i in range(1,num_planet+1):
+        c.add(i=i, mass=5.972 * 10**24, radius=0.05)
 
     c.init(- 149.6 * 10**9, 149.6 * 10**9)
     return c
