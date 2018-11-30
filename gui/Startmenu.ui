@@ -57,6 +57,9 @@
      <height>23</height>
     </rect>
    </property>
+   <property name="value" stdset="0">
+    <double>50.000000000000000</double>
+   </property>
   </widget>
   <widget class="QSlider" name="maxmassslider">
    <property name="geometry">
@@ -71,7 +74,10 @@
     <number>1</number>
    </property>
    <property name="maximum">
-    <number>1000</number>
+    <number>10</number>
+   </property>
+   <property name="value">
+    <number>5</number>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -98,6 +104,9 @@
      <width>64</width>
      <height>23</height>
     </rect>
+   </property>
+   <property name="value" stdset="0">
+    <double>5.000000000000000</double>
    </property>
   </widget>
   <widget class="QPushButton" name="startButton">
@@ -136,10 +145,13 @@
     </rect>
    </property>
    <property name="minimum">
-    <number>150</number>
+    <number>20</number>
    </property>
    <property name="maximum">
-    <number>1000</number>
+    <number>400</number>
+   </property>
+   <property name="value">
+    <number>150</number>
    </property>
    <property name="orientation">
     <enum>Qt::Horizontal</enum>
@@ -166,6 +178,9 @@
      <width>64</width>
      <height>23</height>
     </rect>
+   </property>
+   <property name="value" stdset="0">
+    <double>150.000000000000000</double>
    </property>
   </widget>
   <widget class="QLabel" name="label_5">

@@ -48,14 +48,14 @@ def initialize():
     update_scale_factor(c)
     return c
 
-def initialize_random(num_planet):
+def initialize_random(num_planet, area_min, area_max, mass_max):
 
     c = context(num_planet + 1)
     c.add(i=0, mass=1.989 * 10 ** 30, radius=0.2) # Sonne
     for i in range(1,num_planet+1):
-        c.add(i=i, mass=5.972 * 10**24, radius=0.05)
+        c.add(i=i, mass=mass_max, radius=0.05)
 
-    c.init(- 149.6 * 10**9, 149.6 * 10**9)
+    c.init(area_min, area_max)#- 149.6 * 10**9, 149.6 * 10**9)
     update_scale_factor(c)
     return c
 

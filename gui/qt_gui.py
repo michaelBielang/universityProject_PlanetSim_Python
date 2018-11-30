@@ -28,8 +28,8 @@ class qt_ui(QtWidgets.QDialog):
         self.maxmassslider.valueChanged.connect(self.update)
         self.maxdistslider.valueChanged.connect(self.update)
         self.sunmulslider.valueChanged.connect(self.update)
-        #self.SpeedSlider.valueChanged.connect(self.update)
-        #self.SunMassSlider.valueChanged.connect(self.update)
+        # self.SpeedSlider.valueChanged.connect(self.update)
+        # self.SunMassSlider.valueChanged.connect(self.update)
 
         # self.SpeedLabel.valuechanged.connect(self.update())
         self.renderer_conn, self.simulation_conn = None, None
@@ -42,7 +42,7 @@ class qt_ui(QtWidgets.QDialog):
         self.objcountdisp.display(self.objcountslider.value())
         self.maxmassdisp.display(self.maxmassslider.value())
         self.maxdistdisp.display(self.maxdistslider.value())
-        self.sunmuldisp.display(self.sunmulslider.value()/10)
+        self.sunmuldisp.display(self.sunmulslider.value() / 10)
 
     def start_random(self):
         self.start_simulation(False)
@@ -57,10 +57,13 @@ class qt_ui(QtWidgets.QDialog):
         if sosy is True:
             context = s.initialize()
         else:
-            context = s.initialize_random(50)
+            context = s.initialize_random(self.objcountslider.value()
+                                          , -self.maxdistslider.value() * 10**9
+                                          , self.maxdistslider.value() + 10**9
+                                          , self.maxmassslider.value() * 10**24)
 
-        context.add_body_mass(0, self.sunmulslider.value()/10)
-        #context.add_speed(self.SpeedSlider.value()/10)
+        context.add_body_mass(0, self.sunmulslider.value() / 10)
+        # context.add_speed(self.SpeedSlider.value()/10)
 
         self.renderer_conn, self.simulation_conn = multiprocessing.Pipe()
         self.simulation_process = \
