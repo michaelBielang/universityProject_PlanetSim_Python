@@ -1,6 +1,7 @@
 """QT_GUI"""
 
 import sys
+import core.simulation as s
 import multiprocessing
 from PyQt5 import QtWidgets, uic
 
@@ -9,8 +10,7 @@ from gui.galaxy_renderer import galaxy_renderer
 
 
 class qt_ui(QtWidgets.QDialog):
-    def __init__(self, context):
-        self.context = context
+    def __init__(self):
 
         super(qt_ui, self).__init__()
         import os
@@ -18,13 +18,18 @@ class qt_ui(QtWidgets.QDialog):
         new_working_dir = os.path.dirname(os.path.abspath(__file__))
 
         os.chdir(new_working_dir)
-        uic.loadUi('Default_Context_Menu.ui', self)
+        uic.loadUi('Startmenu.ui', self)
         os.chdir(old_working_dir)
 
-        self.startButton.clicked.connect(self.start_simulation)
+        self.startButton.clicked.connect(self.start_random)
+        self.sosy.clicked.connect(self.start_sosy)
         self.stopButton.clicked.connect(self.stop_simulation)
-        self.SpeedSlider.valueChanged.connect(self.update)
-        self.SunMassSlider.valueChanged.connect(self.update)
+        self.objcountslider.valueChanged.connect(self.update)
+        self.maxmassslider.valueChanged.connect(self.update)
+        self.maxdistslider.valueChanged.connect(self.update)
+        self.sunmulslider.valueChanged.connect(self.update)
+        #self.SpeedSlider.valueChanged.connect(self.update)
+        #self.SunMassSlider.valueChanged.connect(self.update)
 
         # self.SpeedLabel.valuechanged.connect(self.update())
         self.renderer_conn, self.simulation_conn = None, None
@@ -34,21 +39,33 @@ class qt_ui(QtWidgets.QDialog):
     def update(self):
         # self.SpeedLabel.value = self.SpeedSlider.value()
         # self.SunMassLabel.value = self.SpeedSlider.value()
-        self.SpeedLabel.setText(str(self.SpeedSlider.value()/10))
-        self.SunMassLabel.setText(str(self.SunMassSlider.value()/10))
+        self.objcountdisp.display(self.objcountslider.value())
+        self.maxmassdisp.display(self.maxmassslider.value())
+        self.maxdistdisp.display(self.maxdistslider.value())
+        self.sunmuldisp.display(self.sunmulslider.value()/10)
 
-    def start_simulation(self):
+    def start_random(self):
+        self.start_simulation(False)
+
+    def start_sosy(self):
+        self.start_simulation(True)
+
+    def start_simulation(self, sosy):
         """
             Start simulation and render process connected with a pipe.
         """
+        if sosy is True:
+            context = s.initialize()
+        else:
+            context = s.initialize_random(50)
 
-        self.context.add_body_mass(0, self.SunMassSlider.value()/10)
-        #self.context.add_speed(self.SpeedSlider.value()/10)
+        context.add_body_mass(0, self.sunmulslider.value()/10)
+        #context.add_speed(self.SpeedSlider.value()/10)
 
         self.renderer_conn, self.simulation_conn = multiprocessing.Pipe()
         self.simulation_process = \
             multiprocessing.Process(target=opengl_simulation.startup,
-                                    args=(self.simulation_conn, self.context))
+                                    args=(self.simulation_conn, context))
         self.render_process = \
             multiprocessing.Process(target=galaxy_renderer.startup,
                                     args=(self.renderer_conn, 60), )

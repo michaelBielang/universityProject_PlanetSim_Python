@@ -7,6 +7,7 @@ class context:
         self.mass_all = 0.0
         self.context = []
         self.np_bodies = np.zeros((num_planets, 8), dtype=np.float64)
+        self.SCALE_FACTOR = 0.0
 
     def add(self, i, mass, radius):
         # NP Array is defind like this np_array[0:3] is the x,y,z position,

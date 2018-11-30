@@ -10,15 +10,14 @@ import sys
 from PyQt5 import QtWidgets
 import core.simulation as s
 from gui.qt_gui import qt_ui
-import numpy as np
 
 
 def main():
     """main function"""
 
-    context = s.initialize_random(20)
+    #context = s.initialize_random(20)
     app = QtWidgets.QApplication(sys.argv)
-    simulation_gui = qt_ui(context)
+    simulation_gui = qt_ui()
     simulation_gui.show()
     sys.exit(app.exec_())
 

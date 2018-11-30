@@ -36,7 +36,7 @@ def calculate_velocity(planet, other):
     acc = np.zeros(3)
 
     distance_vector = other[0:3] - planet[0:3]
-    distance_length = np.sqrt(distance_vector[0]**2
+    distance_length = math.sqrt(distance_vector[0]**2
                               + distance_vector[1]**2
                               + distance_vector[2]**2)
 
@@ -51,3 +51,4 @@ def calculate_velocity(planet, other):
         acc += f_vector/planet[6]
 
     return acc;
+

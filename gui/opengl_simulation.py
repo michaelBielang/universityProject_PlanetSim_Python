@@ -24,9 +24,8 @@ __FPS = 60
 #    time.sleep(1/__FPS)
 
 
-SCALE_FACTOR = 450 * 10 ** 9
 
-def _move_bodies(bodies, bodies_list):
+def _move_bodies(bodies, bodies_list, scale):
     """
     Initialises the needed NP Array for transfering the Position of the
     Bodys over the Pipe
@@ -39,11 +38,11 @@ def _move_bodies(bodies, bodies_list):
         bodies = np.zeros((bodies_list.__len__(), 4), dtype=np.float64)
 
     for body_index in range(bodies_list.__len__()):
-        bodies[body_index] = np.append(bodies_list[body_index][0:3] / SCALE_FACTOR,
+        bodies[body_index] = np.append(bodies_list[body_index][0:3] / scale,
               bodies_list[body_index][7])
 
     # ToDo is sleep nessesary? Maybe not (or yes for Performance Resons)
-    time.sleep(1/__FPS)
+    #time.sleep(1/__FPS)
     return bodies
 
 
@@ -80,6 +79,6 @@ def startup(sim_pipe, context):
         s.sim_calc(context,70000)
     # s.sim_calc(bodies_list,70000)
 
-        bodies = _move_bodies(bodies, context.np_bodies)
+        bodies = _move_bodies(bodies, context.np_bodies, context.SCALE_FACTOR)
 
         sim_pipe.send(bodies)
