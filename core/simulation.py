@@ -64,11 +64,3 @@ def initialize_random(num_planet, area_min, area_max, mass_max):
 def sim_calc(bodies, timestep):
     for body in bodies:
         calc.calculate_and_set_new_velocity(body, bodies, timestep)
-
-def sim_calc(context, timestep):
-    context.update(timestep)
-
-
-def sim_calc_loop(context,timestep):
-    while True:
-        sim_calc(context,timestep)

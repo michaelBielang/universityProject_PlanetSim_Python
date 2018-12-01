@@ -29,26 +29,24 @@ def calc_inital_velocity(body, context):
                 math.sqrt(G * context.mass_all / body_distance_length)
     return  (body_distance * z / body_distance_length_z) * veloccity
 
-
 def calculate_velocity(planet, other):
     """Set velocity based on every planet in the system."""
 
-    acc = np.zeros(3)
+    #acc = np.zeros(3,dtype=np.float64)
 
     distance_vector = other[0:3] - planet[0:3]
-    distance_length = math.sqrt(distance_vector[0]**2
-                              + distance_vector[1]**2
-                              + distance_vector[2]**2)
+    distance_length = math.sqrt(math.pow(distance_vector[0],2)+math.pow(distance_vector[1],2)+ math.pow(distance_vector[2],2))
 
     # Only calculate force if bodies not on same position
     # (divide by zero)
-    if distance_length != 0.0:
+    if distance_length != 0:
         # calculate gravity force
         f_total = G * planet[6]*other[6]/(distance_length**2)
         f_vector = (distance_vector/distance_length)*f_total
 
         # F=m/a -> a=F/m
-        acc += f_vector/planet[6]
+        #acc += f_vector/planet[6]
+        return (f_vector/planet[6]);
 
-    return acc;
+    return 0
 

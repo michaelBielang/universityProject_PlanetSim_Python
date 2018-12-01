@@ -1,7 +1,6 @@
 from core import calc
 import numpy as np
 
-
 class context:
     def __init__(self, num_planets):
         self.mass_all = 0.0
@@ -31,8 +30,9 @@ class context:
     def update(self, timeStep):
         for planet in self.np_bodies:
             for other in self.np_bodies:
-                if np.array_equal(planet,other):
-                    continue
+                # Removed because its faster to calculate than compare two numpy arrays
+                #if np.array_equal(planet,other):
+                #    continue
                 a = calc.calculate_velocity(planet, other)
                 planet[3:6]= planet[3:6] + timeStep * a
 

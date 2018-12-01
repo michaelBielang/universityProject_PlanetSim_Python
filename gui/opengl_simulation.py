@@ -76,7 +76,7 @@ def startup(sim_pipe, context):
                 print('simulation exiting ...')
                 sys.exit(0)
 
-        s.sim_calc(context,70000)
+        context.update(3000)
     # s.sim_calc(bodies_list,70000)
 
         bodies = _move_bodies(bodies, context.np_bodies, context.SCALE_FACTOR)
