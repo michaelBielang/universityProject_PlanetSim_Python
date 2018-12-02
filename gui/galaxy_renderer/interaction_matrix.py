@@ -19,8 +19,8 @@ helper class for interactive object motion
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 # or open http://www.fsf.org/licensing/licenses/gpl.html
 
-from __future__ import print_function
 from __future__ import division
+from __future__ import print_function
 
 import sys
 
@@ -30,6 +30,7 @@ try:
 except ImportError:
     print('Error: PyOpenGL not installed properly !!')
     sys.exit()
+
 
 class InteractionMatrix:
     """Class holding a matrix representing a rigid transformation.
@@ -73,6 +74,7 @@ class InteractionMatrix:
         """
         return self.__current_matrix
 
+
 def _main(argv):
     GLUT.glutInit(argv)
     GLUT.glutCreateWindow(str.encode(sys.argv[0]))
@@ -85,6 +87,6 @@ def _main(argv):
     interaction_m.add_translation(1, 2, 3)
     print(interaction_m.get_current_matrix())
 
+
 if __name__ == '__main__':
     _main(sys.argv)
-    

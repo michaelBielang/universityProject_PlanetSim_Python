@@ -1,14 +1,14 @@
 """opengl"""
 
 import sys
-import time
+
 import numpy as np
 
 from gui.galaxy_renderer.simulation_constants import END_MESSAGE
 
 __FPS = 60
-# __DELTA_ALPHA = 0.01
 
+# __DELTA_ALPHA = 0.01
 
 # def _move_bodies(bodies,bodies_list):
 #    """
@@ -22,7 +22,6 @@ __FPS = 60
 #        body[1] = bodies_list[body_index].y
 #        body[2] = bodies_list[body_index].z
 #    time.sleep(1/__FPS)
-
 
 
 def _move_bodies(bodies, bodies_list, scale):
@@ -39,10 +38,10 @@ def _move_bodies(bodies, bodies_list, scale):
 
     for body_index in range(bodies_list.__len__()):
         bodies[body_index] = np.append(bodies_list[body_index][0:3] / scale,
-              bodies_list[body_index][7])
+                                       bodies_list[body_index][7])
 
     # ToDo is sleep nessesary? Maybe not (or yes for Performance Resons)
-    #time.sleep(1/__FPS)
+    # time.sleep(1/__FPS)
     return bodies
 
 
@@ -55,7 +54,6 @@ def startup(sim_pipe, context):
     :param bodies_list: The Body List deliverd by the Sinmulation
     :return:
     """
-    import core.simulation as s
 
     bodies = None
 
@@ -76,8 +74,8 @@ def startup(sim_pipe, context):
                 print('simulation exiting ...')
                 sys.exit(0)
 
-        context.update(3000)
-    # s.sim_calc(bodies_list,70000)
+        context.update(10000)
+        # s.sim_calc(bodies_list,70000)
 
         bodies = _move_bodies(bodies, context.np_bodies, context.SCALE_FACTOR)
 

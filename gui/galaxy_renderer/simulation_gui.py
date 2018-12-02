@@ -1,4 +1,5 @@
 """ simple PyQt5 simulation controller """
+import multiprocessing
 #
 # Copyright (C) 2017  "Peter Roesch" <Peter.Roesch@fh-augsburg.de>
 #
@@ -18,17 +19,18 @@
 # or open http://www.fsf.org/licensing/licenses/gpl.html
 #
 import sys
-import multiprocessing
 
-from PyQt5 import QtWidgets
-import simulation_mockup
 import galaxy_renderer
+import simulation_mockup
+from PyQt5 import QtWidgets
 from simulation_constants import END_MESSAGE
+
 
 class SimulationGUI(QtWidgets.QWidget):
     """
         Widget with two buttons
     """
+
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
         self.setGeometry(0, 0, 260, 60)
@@ -85,6 +87,7 @@ class SimulationGUI(QtWidgets.QWidget):
         self.stop_simulation()
         self.close()
 
+
 def _main(argv):
     """
         Main function to avoid pylint complains concerning constant names.
@@ -93,6 +96,7 @@ def _main(argv):
     simulation_gui = SimulationGUI()
     simulation_gui.show()
     sys.exit(app.exec_())
+
 
 if __name__ == '__main__':
     _main(sys.argv)

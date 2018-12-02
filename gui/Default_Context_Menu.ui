@@ -1,148 +1,148 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Dialog</class>
- <widget class="QDialog" name="Dialog">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>626</width>
-    <height>194</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Setting Menu</string>
-  </property>
-  <widget class="QWidget" name="horizontalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>30</y>
-     <width>581</width>
-     <height>51</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QPushButton" name="startButton">
-      <property name="text">
-       <string>Start</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="stopButton">
-      <property name="text">
-       <string>Stop</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="horizontalLayoutWidget_2">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>90</y>
-     <width>581</width>
-     <height>80</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <item>
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Sun Mass Multiplikator</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="SunMassLabel">
-      <property name="text">
-       <string>1</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QSlider" name="SunMassSlider">
-      <property name="minimum">
-       <number>0</number>
-      </property>
-      <property name="maximum">
-       <number>100</number>
-      </property>
-      <property name="singleStep">
-       <number>1</number>
-      </property>
-      <property name="pageStep">
-       <number>1</number>
-      </property>
-      <property name="value">
-       <number>10</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="label">
-      <property name="text">
-       <string>Speed Multiplikator</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="SpeedLabel">
-      <property name="text">
-       <string>1</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QSlider" name="SpeedSlider">
-      <property name="minimum">
-       <number>0</number>
-      </property>
-      <property name="maximum">
-       <number>100</number>
-      </property>
-      <property name="pageStep">
-       <number>1</number>
-      </property>
-      <property name="value">
-       <number>10</number>
-      </property>
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QLabel" name="label_4">
-   <property name="geometry">
-    <rect>
-     <x>280</x>
-     <y>170</y>
-     <width>147</width>
-     <height>78</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>1x</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
- </widget>
- <resources/>
- <connections/>
+    <class>Dialog</class>
+    <widget class="QDialog" name="Dialog">
+        <property name="geometry">
+            <rect>
+                <x>0</x>
+                <y>0</y>
+                <width>626</width>
+                <height>194</height>
+            </rect>
+        </property>
+        <property name="windowTitle">
+            <string>Setting Menu</string>
+        </property>
+        <widget class="QWidget" name="horizontalLayoutWidget">
+            <property name="geometry">
+                <rect>
+                    <x>30</x>
+                    <y>30</y>
+                    <width>581</width>
+                    <height>51</height>
+                </rect>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout">
+                <item>
+                    <widget class="QPushButton" name="startButton">
+                        <property name="text">
+                            <string>Start</string>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <widget class="QPushButton" name="stopButton">
+                        <property name="text">
+                            <string>Stop</string>
+                        </property>
+                    </widget>
+                </item>
+            </layout>
+        </widget>
+        <widget class="QWidget" name="horizontalLayoutWidget_2">
+            <property name="geometry">
+                <rect>
+                    <x>30</x>
+                    <y>90</y>
+                    <width>581</width>
+                    <height>80</height>
+                </rect>
+            </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <item>
+                    <widget class="QLabel" name="label_2">
+                        <property name="text">
+                            <string>Sun Mass Multiplikator</string>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <widget class="QLabel" name="SunMassLabel">
+                        <property name="text">
+                            <string>1</string>
+                        </property>
+                        <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <widget class="QSlider" name="SunMassSlider">
+                        <property name="minimum">
+                            <number>0</number>
+                        </property>
+                        <property name="maximum">
+                            <number>100</number>
+                        </property>
+                        <property name="singleStep">
+                            <number>1</number>
+                        </property>
+                        <property name="pageStep">
+                            <number>1</number>
+                        </property>
+                        <property name="value">
+                            <number>10</number>
+                        </property>
+                        <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <widget class="QLabel" name="label">
+                        <property name="text">
+                            <string>Speed Multiplikator</string>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <widget class="QLabel" name="SpeedLabel">
+                        <property name="text">
+                            <string>1</string>
+                        </property>
+                        <property name="alignment">
+                            <set>Qt::AlignCenter</set>
+                        </property>
+                    </widget>
+                </item>
+                <item>
+                    <widget class="QSlider" name="SpeedSlider">
+                        <property name="minimum">
+                            <number>0</number>
+                        </property>
+                        <property name="maximum">
+                            <number>100</number>
+                        </property>
+                        <property name="pageStep">
+                            <number>1</number>
+                        </property>
+                        <property name="value">
+                            <number>10</number>
+                        </property>
+                        <property name="orientation">
+                            <enum>Qt::Horizontal</enum>
+                        </property>
+                    </widget>
+                </item>
+            </layout>
+        </widget>
+        <widget class="QLabel" name="label_4">
+            <property name="geometry">
+                <rect>
+                    <x>280</x>
+                    <y>170</y>
+                    <width>147</width>
+                    <height>78</height>
+                </rect>
+            </property>
+            <property name="text">
+                <string>1x</string>
+            </property>
+            <property name="alignment">
+                <set>Qt::AlignCenter</set>
+            </property>
+        </widget>
+    </widget>
+    <resources/>
+    <connections/>
 </ui>

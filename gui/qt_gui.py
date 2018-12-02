@@ -1,16 +1,19 @@
 """QT_GUI"""
 
-import sys
-import core.simulation as s
 import multiprocessing
+
 from PyQt5 import QtWidgets, uic
 
+import core.simulation as s
 from gui import opengl_simulation
 from gui.galaxy_renderer import galaxy_renderer
 
 
 class qt_ui(QtWidgets.QDialog):
     def __init__(self):
+        """
+        Initialise the QT App
+        """
 
         super(qt_ui, self).__init__()
         import os
@@ -37,6 +40,10 @@ class qt_ui(QtWidgets.QDialog):
         self.simulation_process = None
 
     def update(self):
+        """
+        Slider Updates
+        :return:
+        """
         # self.SpeedLabel.value = self.SpeedSlider.value()
         # self.SunMassLabel.value = self.SpeedSlider.value()
         self.objcountdisp.display(self.objcountslider.value())
@@ -45,9 +52,17 @@ class qt_ui(QtWidgets.QDialog):
         self.sunmuldisp.display(self.sunmulslider.value() / 10)
 
     def start_random(self):
+        """
+        Start the Randonm
+        :return:
+        """
         self.start_simulation(False)
 
     def start_sosy(self):
+        """
+        Start the Sun System
+        :return:
+        """
         self.start_simulation(True)
 
     def start_simulation(self, sosy):
@@ -57,10 +72,10 @@ class qt_ui(QtWidgets.QDialog):
         if sosy is True:
             context = s.initialize()
         else:
-            context = s.initialize_random(self.objcountslider.value()
-                                          , -self.maxdistslider.value() * 10**9
-                                          , self.maxdistslider.value() + 10**9
-                                          , self.maxmassslider.value() * 10**24)
+            context = s.initialize_random(self.objcountslider.value(),
+                                          -self.maxdistslider.value() * 10**9,
+                                          self.maxdistslider.value() + 10**9,
+                                          self.maxmassslider.value() * 10**24)
 
         context.add_body_mass(0, self.sunmulslider.value() / 10)
         # context.add_speed(self.SpeedSlider.value()/10)
@@ -95,12 +110,3 @@ class qt_ui(QtWidgets.QDialog):
         """
         self.stop_simulation()
         self.close()
-
-#
-# if __name__ == '__main__':
-#    import core.simulation as s
-#    body_list = s.initialize()
-#    app = QtWidgets.QApplication(sys.argv)
-#    simulation_gui = qt_ui(body_list)
-#    simulation_gui.show()
-#    sys.exit(app.exec_())

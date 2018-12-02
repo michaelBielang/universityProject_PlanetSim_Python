@@ -1,10 +1,16 @@
 ## Modules needed for Simulation
 You need to Install Qt5 in Version 5.x including the QtWidgeds Option
 Example for PIP 
-> pip install qt5
+> pip install qt5 
+
+> pip install freeglut 
+
+> pip install PyOpenGL 
+
+> pip install PyOpenGL-accelerate
 
 If you want to modify the qt Desing load the qt4 tools, but you can also do it manually
-> pip install qt4-tools
+> pip install qt5-tools
 
 (qt5-tools not avabile via pip)
 

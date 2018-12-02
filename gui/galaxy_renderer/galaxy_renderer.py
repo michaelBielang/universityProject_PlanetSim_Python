@@ -21,6 +21,7 @@ OpenGL output for gravity simulation
 #
 import sys
 import time
+
 try:
     from OpenGL import GLUT
     from OpenGL import GL
@@ -38,10 +39,12 @@ _WINDOW_POSITION = (200, 200)
 _LIGHT_POSITION = (2, 2, 3)
 _CAMERA_POSITION = (0, 0, 5)
 
+
 class GalaxyRenderer:
     """
         Class containing OpenGL code
     """
+
     def __init__(self, render_pipe, fps):
         self.render_pipe = render_pipe
         self.fps = fps
@@ -64,7 +67,6 @@ class GalaxyRenderer:
         GLUT.glutCreateWindow(str.encode("Galaxy Renderer"))
         GLUT.glutDisplayFunc(self.render)
         GLUT.glutIdleFunc(self.update_positions)
-
 
     def init_gl(self):
         """
@@ -107,7 +109,7 @@ class GalaxyRenderer:
             # glut event loop needs hard exit ...
             sys.exit(0)
         if self.bodies is None:
-            time.sleep(1/self.fps)
+            time.sleep(1 / self.fps)
             return
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
         GL.glMatrixMode(GL.GL_PROJECTION)
@@ -149,7 +151,8 @@ class GalaxyRenderer:
                 self.bodies = pipe_input
                 GLUT.glutPostRedisplay()
         else:
-            time.sleep(1/self.fps)
+            time.sleep(1 / self.fps)
+
 
 def startup(render_pipe, fps):
     """

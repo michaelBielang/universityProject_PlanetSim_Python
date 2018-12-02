@@ -22,9 +22,10 @@ Start simulation and renderer in separate processes connected by a pipe.
 import multiprocessing
 import time
 
-import simulation_mockup
 import galaxy_renderer
+import simulation_mockup
 from simulation_constants import END_MESSAGE
+
 
 def _startup():
     renderer_conn, simulation_conn = multiprocessing.Pipe()
@@ -41,6 +42,7 @@ def _startup():
     renderer_conn.send(END_MESSAGE)
     simulation_process.join()
     render_process.join()
+
 
 if __name__ == '__main__':
     _startup()

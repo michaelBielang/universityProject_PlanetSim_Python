@@ -1,21 +1,20 @@
 """
-#########################
-#
-# Planet Simulation Prog3 2018
-#
-#########################
+#################################
+#                               #
+# Planet Simulation Prog3 2018  #
+#                               #
+#################################
 """
 
 import sys
+
 from PyQt5 import QtWidgets
-import core.simulation as s
+
 from gui.qt_gui import qt_ui
 
 
 def main():
     """main function"""
-
-    #context = s.initialize_random(20)
     app = QtWidgets.QApplication(sys.argv)
     simulation_gui = qt_ui()
     simulation_gui.show()
