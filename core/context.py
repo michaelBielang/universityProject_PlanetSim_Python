@@ -11,6 +11,9 @@ class context:
         self.context = []
         self.np_bodies = np.zeros((num_planets, 8), dtype=np.float64)
         self.SCALE_FACTOR = 0.0
+        self.TimeStep = 30000
+        self.InputQueue = multiprocessing.JoinableQueue()
+        self.OutputQueue = multiprocessing.Queue()
 
     def add(self, i, mass, radius):
         """
@@ -80,3 +83,54 @@ class context:
             m += planet[6]
 
         return m
+
+def InitParralelWorkers(self):
+    """
+    Starts the Workers,
+    :param self: Needs a context
+    :return: None
+    """
+
+    #Setup Executor pool with number of CPU Cores
+    self.executor = multiprocessing.Pool(multiprocessing.cpu_count())
+    for i in range(multiprocessing.cpu_count()):
+        self.executor.apply(ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.np_bodies))
+
+
+@staticmethod
+def ExecutionWorker(InputQueue,OutputQueue,np_bodies):
+    """
+    Execution Worker for parralel Calculation of the Acceleration
+    :param InputQueue:
+    :param OutputQueue:
+    :return:
+    """
+    while True:
+        #Check if new Work exists
+        Task = InputQueue.get()
+        if Task != None:
+            #Do work
+            for planet in Task:
+                calc_acceleration = 0
+                for other in np_bodies:
+                    calc_acceleration += calc.calculate_velocity(planet, other)
+                OutputQueue.put(calc_acceleration)
+                InputQueue.task_done()
+        elif Task == 0:
+         #Exit no Work anymore
+         break
+
+def updateWorkers(self):
+    for work in self.partial_list:
+        self.InputQueue.put()
+
+    # Join my Workers together
+    self.InputQueue.join()
+    
+    for output in self.OutputQueue:
+        # Reasamble List
+        test = 0;
+
+    ## Step is finished
+
+
