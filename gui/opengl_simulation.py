@@ -67,6 +67,7 @@ def startup(sim_pipe, context):
     # NP Array is defind like this np_array[0:3] is the x,y,z position,
     # np_arry[3:6] is the Velocity, np_array[7] is the mass, np_arry[8] is the radius
 
+    context.InitParralelWorkers()
     while True:
         if sim_pipe.poll():
             message = sim_pipe.recv()
@@ -74,7 +75,8 @@ def startup(sim_pipe, context):
                 print('simulation exiting ...')
                 sys.exit(0)
 
-        context.update(10000)
+        #context.update(10000)
+        context.updateWorkers()
         # s.sim_calc(bodies_list,70000)
 
         bodies = _move_bodies(bodies, context.np_bodies, context.SCALE_FACTOR)
