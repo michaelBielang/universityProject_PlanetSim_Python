@@ -62,7 +62,7 @@ def initialize():
     return c
 
 
-def initialize_random(num_planet, area_min, area_max, mass_max):
+def initialize_random(num_planet, area_min, area_max, rad_min, rad_max, mass_min, mass_max):
     """
     Initialize the Random Universe
     :param num_planet:  The num of planets specified by the user
@@ -76,8 +76,8 @@ def initialize_random(num_planet, area_min, area_max, mass_max):
     for i in range(1, num_planet + 1):
         c.add(
             i=i,
-            mass=random.uniform(1, mass_max),
-            radius=random.uniform(0.02, 0.1))
+            mass=random.uniform(mass_min, mass_max),
+            radius=random.uniform(rad_min, rad_max))
 
     c.init(area_min, area_max)  # - 149.6 * 10**9, 149.6 * 10**9)
     update_scale_factor(c)

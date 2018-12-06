@@ -1,253 +1,333 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <class>Dialog</class>
-    <widget class="QDialog" name="Dialog">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>286</width>
-                <height>361</height>
-            </rect>
-        </property>
-        <property name="windowTitle">
-            <string>Dialog</string>
-        </property>
-        <widget class="QSlider" name="objcountslider">
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>50</y>
-                    <width>160</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property name="minimum">
-                <number>1</number>
-            </property>
-            <property name="maximum">
-                <number>1000</number>
-            </property>
-            <property name="value">
-                <number>50</number>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-            </property>
-        </widget>
-        <widget class="QLabel" name="label">
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>30</y>
-                    <width>131</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Anzahl der Planeten</string>
-            </property>
-        </widget>
-        <widget class="QLCDNumber" name="objcountdisp">
-            <property name="geometry">
-                <rect>
-                    <x>180</x>
-                    <y>40</y>
-                    <width>64</width>
-                    <height>23</height>
-                </rect>
-            </property>
-            <property name="value" stdset="0">
-                <double>50.000000000000000</double>
-            </property>
-        </widget>
-        <widget class="QSlider" name="maxmassslider">
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>110</y>
-                    <width>160</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property name="minimum">
-                <number>1</number>
-            </property>
-            <property name="maximum">
-                <number>10</number>
-            </property>
-            <property name="value">
-                <number>5</number>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-            </property>
-        </widget>
-        <widget class="QLabel" name="label_2">
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>90</y>
-                    <width>161</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Max. Masse der Planeten</string>
-            </property>
-        </widget>
-        <widget class="QLCDNumber" name="maxmassdisp">
-            <property name="geometry">
-                <rect>
-                    <x>180</x>
-                    <y>100</y>
-                    <width>64</width>
-                    <height>23</height>
-                </rect>
-            </property>
-            <property name="value" stdset="0">
-                <double>5.000000000000000</double>
-            </property>
-        </widget>
-        <widget class="QPushButton" name="startButton">
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>310</y>
-                    <width>91</width>
-                    <height>31</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Start</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" name="stopButton">
-            <property name="geometry">
-                <rect>
-                    <x>170</x>
-                    <y>310</y>
-                    <width>91</width>
-                    <height>31</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Stop</string>
-            </property>
-        </widget>
-        <widget class="QSlider" name="maxdistslider">
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>170</y>
-                    <width>160</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property name="minimum">
-                <number>20</number>
-            </property>
-            <property name="maximum">
-                <number>400</number>
-            </property>
-            <property name="value">
-                <number>150</number>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-            </property>
-        </widget>
-        <widget class="QLabel" name="label_4">
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>140</y>
-                    <width>261</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Max. Abstand der Planeten zum Zentrum</string>
-            </property>
-        </widget>
-        <widget class="QLCDNumber" name="maxdistdisp">
-            <property name="geometry">
-                <rect>
-                    <x>180</x>
-                    <y>160</y>
-                    <width>64</width>
-                    <height>23</height>
-                </rect>
-            </property>
-            <property name="value" stdset="0">
-                <double>150.000000000000000</double>
-            </property>
-        </widget>
-        <widget class="QLabel" name="label_5">
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>200</y>
-                    <width>151</width>
-                    <height>21</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Sun Multiplier</string>
-            </property>
-        </widget>
-        <widget class="QPushButton" name="sosy">
-            <property name="geometry">
-                <rect>
-                    <x>60</x>
-                    <y>260</y>
-                    <width>161</width>
-                    <height>31</height>
-                </rect>
-            </property>
-            <property name="text">
-                <string>Sonnensystem</string>
-            </property>
-        </widget>
-        <widget class="QSlider" name="sunmulslider">
-            <property name="geometry">
-                <rect>
-                    <x>10</x>
-                    <y>230</y>
-                    <width>160</width>
-                    <height>16</height>
-                </rect>
-            </property>
-            <property name="minimum">
-                <number>0</number>
-            </property>
-            <property name="maximum">
-                <number>50</number>
-            </property>
-            <property name="singleStep">
-                <number>1</number>
-            </property>
-            <property name="value">
-                <number>10</number>
-            </property>
-            <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-            </property>
-        </widget>
-        <widget class="QLCDNumber" name="sunmuldisp">
-            <property name="geometry">
-                <rect>
-                    <x>180</x>
-                    <y>220</y>
-                    <width>64</width>
-                    <height>23</height>
-                </rect>
-            </property>
-            <property name="value" stdset="0">
-                <double>1.000000000000000</double>
-            </property>
-        </widget>
-    </widget>
-    <resources/>
-    <connections/>
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>304</width>
+    <height>453</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <widget class="QSlider" name="objcountslider">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>50</y>
+     <width>160</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>1</number>
+   </property>
+   <property name="maximum">
+    <number>1000</number>
+   </property>
+   <property name="value">
+    <number>50</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>141</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Anzahl der Planeten</string>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="objcountdisp">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>40</y>
+     <width>64</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="value" stdset="0">
+    <double>50.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="startButton">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>400</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="stopButton">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>400</y>
+     <width>91</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Stop</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="maxdistslider">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>250</y>
+     <width>160</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>20</number>
+   </property>
+   <property name="maximum">
+    <number>400</number>
+   </property>
+   <property name="value">
+    <number>150</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>210</y>
+     <width>261</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Max. Abstand der Planeten zum Zentrum</string>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="maxdistdisp">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>240</y>
+     <width>64</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="value" stdset="0">
+    <double>150.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>280</y>
+     <width>151</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Sun Multiplier</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="sosy">
+   <property name="geometry">
+    <rect>
+     <x>60</x>
+     <y>350</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Sonnensystem</string>
+   </property>
+  </widget>
+  <widget class="QSlider" name="sunmulslider">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>310</y>
+     <width>160</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <number>0</number>
+   </property>
+   <property name="maximum">
+    <number>50</number>
+   </property>
+   <property name="singleStep">
+    <number>1</number>
+   </property>
+   <property name="value">
+    <number>10</number>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+  </widget>
+  <widget class="QLCDNumber" name="sunmuldisp">
+   <property name="geometry">
+    <rect>
+     <x>180</x>
+     <y>300</y>
+     <width>64</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="value" stdset="0">
+    <double>1.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>70</y>
+     <width>201</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Massebereich der Planeten</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="minmass">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>100</y>
+     <width>68</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <double>1.000000000000000</double>
+   </property>
+   <property name="maximum">
+    <double>10.000000000000000</double>
+   </property>
+   <property name="value">
+    <double>5.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="maxmass">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>100</y>
+     <width>68</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <double>1.000000000000000</double>
+   </property>
+   <property name="maximum">
+    <double>10.000000000000000</double>
+   </property>
+   <property name="value">
+    <double>7.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_6">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>100</y>
+     <width>41</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>bis</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_8">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>140</y>
+     <width>201</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Radienbereich der Planeten</string>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="minrad">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>170</y>
+     <width>68</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <double>1.000000000000000</double>
+   </property>
+   <property name="maximum">
+    <double>10.000000000000000</double>
+   </property>
+   <property name="value">
+    <double>3.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="maxrad">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>170</y>
+     <width>68</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="minimum">
+    <double>1.000000000000000</double>
+   </property>
+   <property name="maximum">
+    <double>10.000000000000000</double>
+   </property>
+   <property name="value">
+    <double>6.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_9">
+   <property name="geometry">
+    <rect>
+     <x>110</x>
+     <y>170</y>
+     <width>41</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>bis</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
 </ui>
