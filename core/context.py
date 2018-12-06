@@ -1,4 +1,5 @@
 import multiprocessing
+import sys
 
 import numpy as np
 
@@ -13,8 +14,8 @@ class context:
         self.SCALE_FACTOR = 0.0
         self.TimeStep = 30000
         m = multiprocessing.Manager()
-        self.InputQueue = m.JoinableQueue()
-        self.OutputQueue = m.Queue()
+        self.InputQueue = multiprocessing.JoinableQueue()
+        self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
         self.partial_list = np.array_split(self.np_bodies,multiprocessing.cpu_count()-1)
 
@@ -113,19 +114,19 @@ class context:
         while True:
             #Check if new Work exists
             Task = InputQueue.get()
-            if Task != None:
+            if Task is not None:
                 #Do work
                 for planet in Task:
                     calc_acceleration = 0
                     for other in np_bodies:
                         calc_acceleration += calc.calculate_velocity(planet, other)
                     # Setup Output Array [vx,vy,vz,id]
-                    new_acc = np.concatenate(planet[3:6] + timeStep * calc_acceleration,np.array(planet[9]))
-                    OutputQueue.put(new_acc)
+
+                    new_acc = np.append(planet[3:6] + timeStep * calc_acceleration, np.array(planet[8]))
                     InputQueue.task_done()
-            elif Task == 0:
-                #Exit no Work anymore
-                break
+            #elif Task == 0:
+            #    #Exit no Work anymore
+            #    break
 
     def updateWorkers(self):
 
@@ -137,7 +138,7 @@ class context:
 
         for _ in range(len(self.np_bodies)):
             # Reasamble List
-            item = self.OutputQueue()
+            item = self.OutputQueue.get()
             self.np_bodies[item[4]][3:6] = item
 
         ## Step is finished
