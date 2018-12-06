@@ -97,9 +97,9 @@ class context:
         """
 
         #Setup Executor pool with number of CPU Cores
-        self.executor = multiprocessing.pool.ThreadPool(multiprocessing.cpu_count())
-        for i in range(multiprocessing.cpu_count()):
-            self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.np_bodies_copy,self.TimeStep))
+        self.executor = multiprocessing.pool.ThreadPool(1)
+        for i in range(1):
+            self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.np_bodies,self.TimeStep))
 
 
     @staticmethod
