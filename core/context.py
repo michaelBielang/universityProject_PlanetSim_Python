@@ -1,3 +1,4 @@
+from multiprocessing.pool import ThreadPool
 import multiprocessing
 import sys
 
@@ -13,11 +14,9 @@ class context:
         self.np_bodies = np.zeros((num_planets, 9), dtype=np.float64)
         self.SCALE_FACTOR = 0.0
         self.TimeStep = 30000
-        m = multiprocessing.Manager()
         self.InputQueue = multiprocessing.JoinableQueue()
         self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
-        self.partial_list = np.array_split(self.np_bodies,multiprocessing.cpu_count()-1)
 
     def add(self, i, mass, radius):
         """
@@ -90,6 +89,17 @@ class context:
 
         return m
 
+    def ExitParralelWorkers(self):
+        """
+        Exit the Parralel Workers
+        :return:
+        """
+        if(self.executor is None):
+            raise ValueError("InitParralelWorkers has to be called befor exiting the Workers")
+
+        for _ in range(self.executor):
+            self.InputQueue().put(-1)
+
     def InitParralelWorkers(self):
         """
         Starts the Workers,
@@ -98,7 +108,7 @@ class context:
         """
 
         #Setup Executor pool with number of CPU Cores
-        self.executor = multiprocessing.pool.ThreadPool(1)
+        self.executor = multiprocessing.pool.ThreadPool()
         for i in range(1):
             self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.np_bodies,self.TimeStep))
 
@@ -113,33 +123,38 @@ class context:
         """
         while True:
             #Check if new Work exists
-            Task = InputQueue.get()
-            if Task is not None:
+            planet = InputQueue.get()
+            if planet is not None:
                 #Do work
-                for planet in Task:
-                    calc_acceleration = 0
-                    for other in np_bodies:
-                        calc_acceleration += calc.calculate_velocity(planet, other)
-                    # Setup Output Array [vx,vy,vz,id]
-
-                    new_acc = np.append(planet[3:6] + timeStep * calc_acceleration, np.array(planet[8]))
-                    InputQueue.task_done()
-            #elif Task == 0:
-            #    #Exit no Work anymore
-            #    break
+                calc_acceleration = 0
+                for other in np_bodies:
+                    calc_acceleration += calc.calculate_velocity(planet, other)
+                new_velocity = planet[3:6] + timeStep * calc_acceleration
+                new_position = planet[0:3] + new_velocity*timeStep
+                result = np.append(new_position,new_velocity)
+                result = np.append(result,planet[8])
+                OutputQueue.put(result)
+                InputQueue.task_done()
+            elif planet == -1:
+                #Exit no Work anymore
+                InputQueue.task_done()
+                break
 
     def updateWorkers(self):
 
-        for work in self.partial_list:
+        for work in self.np_bodies:
             self.InputQueue.put(work)
 
         # Join my Workers together
         self.InputQueue.join()
 
+
         for _ in range(len(self.np_bodies)):
             # Reasamble List
             item = self.OutputQueue.get()
-            self.np_bodies[item[4]][3:6] = item
+            # Set new Position
+            self.np_bodies[int(item[6])][0:3] = item[0:3]
+            self.np_bodies[int(item[6])][3:6] = item[3:6]
 
         ## Step is finished
 

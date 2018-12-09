@@ -40,7 +40,6 @@ def _move_bodies(bodies, bodies_list, scale):
         bodies[body_index] = np.append(bodies_list[body_index][0:3] / scale,
                                        bodies_list[body_index][7])
 
-    # ToDo is sleep nessesary? Maybe not (or yes for Performance Resons)
     # time.sleep(1/__FPS)
     return bodies
 
@@ -73,6 +72,7 @@ def startup(sim_pipe, context):
             message = sim_pipe.recv()
             if isinstance(message, str) and message == END_MESSAGE:
                 print('simulation exiting ...')
+                context.ExecutionWorker()
                 sys.exit(0)
 
         #context.update(10000)
