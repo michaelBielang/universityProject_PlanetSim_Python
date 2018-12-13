@@ -106,7 +106,6 @@ class context:
         :param self: Needs a context
         :return: None
         """
-
         #Setup Executor pool with number of CPU Cores
         self.executor = multiprocessing.pool.ThreadPool()
         for i in range(1):
@@ -128,11 +127,11 @@ class context:
                 #Do work
                 calc_acceleration = 0
                 for other in np_bodies:
-                    calc_acceleration += calc.calculate_velocity(planet, other)
-                new_velocity = planet[3:6] + timeStep * calc_acceleration
-                new_position = planet[0:3] + new_velocity*timeStep
+                    calc_acceleration += calc.calculate_velocity(np_bodies[planet], other)
+                new_velocity = np_bodies[planet][3:6] + timeStep * calc_acceleration
+                new_position = np_bodies[planet][0:3] + new_velocity*timeStep
                 result = np.append(new_position,new_velocity)
-                result = np.append(result,planet[8])
+                result = np.append(result,np_bodies[planet][8])
                 OutputQueue.put(result)
                 InputQueue.task_done()
             elif planet == -1:
@@ -142,7 +141,8 @@ class context:
 
     def updateWorkers(self):
 
-        for work in self.np_bodies:
+        # Set Index as Work
+        for work in range(len(self.np_bodies)):
             self.InputQueue.put(work)
 
         # Join my Workers together
