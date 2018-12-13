@@ -43,7 +43,6 @@ def _move_bodies(bodies, bodies_list, scale, col = False):
         bodies[body_index] = np.append(bodies_list[body_index][0:3] / scale,
                                        bodies_list[body_index][7])
 
-    # ToDo is sleep nessesary? Maybe not (or yes for Performance Resons)
     # time.sleep(1/__FPS)
     return bodies
 
@@ -70,14 +69,17 @@ def startup(sim_pipe, context):
     # NP Array is defind like this np_array[0:3] is the x,y,z position,
     # np_arry[3:6] is the Velocity, np_array[7] is the mass, np_arry[8] is the radius
 
+    context.InitParralelWorkers()
     while True:
         if sim_pipe.poll():
             message = sim_pipe.recv()
             if isinstance(message, str) and message == END_MESSAGE:
                 print('simulation exiting ...')
+                context.ExecutionWorker()
                 sys.exit(0)
 
-        context.update(10000)
+        #context.update(10000)
+        context.updateWorkers()
         # s.sim_calc(bodies_list,70000)
 
         bodies = _move_bodies(bodies, context.np_bodies, context.SCALE_FACTOR)
