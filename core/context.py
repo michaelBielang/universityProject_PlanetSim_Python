@@ -4,7 +4,7 @@ import sys
 
 import numpy as np
 
-from core import calc
+from core import calc, taskmanager
 
 
 class context:
@@ -17,6 +17,7 @@ class context:
         self.InputQueue = multiprocessing.JoinableQueue()
         self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
+        taskmanager.TaskManager().startup(self)
 
     def add(self, i, mass, radius):
         """
@@ -106,6 +107,10 @@ class context:
         :param self: Needs a context
         :return: None
         """
+
+        self.Taskmanager = taskmanager.TaskManager().clientConnect()
+        self.InputQueue, self.result_queue = self.Taskmanager.get_job_queue(), self.Taskmanager.get_result_queue()
+        self.np_bodies = self.Taskmanager.get_np_bodies()
         #Setup Executor pool with number of CPU Cores
         self.executor = multiprocessing.pool.ThreadPool()
         for i in range(1):
@@ -142,14 +147,16 @@ class context:
     def updateWorkers(self):
 
         # Set Index as Work
-        for work in range(len(self.np_bodies)):
+        for work in range(self.id_count):
             self.InputQueue.put(work)
 
         # Join my Workers together
+        self.Taskmanager.joinQueue()
+
         self.InputQueue.join()
 
 
-        for _ in range(len(self.np_bodies)):
+        for _ in range(self.id_count):
             # Reasamble List
             item = self.OutputQueue.get()
             # Set new Position
