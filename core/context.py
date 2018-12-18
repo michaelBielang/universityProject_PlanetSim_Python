@@ -164,5 +164,3 @@ class context:
             self.np_bodies[int(item[6])][3:6] = item[3:6]
 
         ## Step is finished
-
-
