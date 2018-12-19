@@ -128,6 +128,10 @@ class context:
         while True:
             #Check if new Work exists
             planet = InputQueue.get()
+            try:
+                np_bodies = np_bodies.get_np_bodies()
+            except:
+                a=True
             if planet is not None:
                 #Do work
                 calc_acceleration = 0
@@ -151,10 +155,14 @@ class context:
             self.InputQueue.put(work)
 
         # Join my Workers together
-        self.Taskmanager.joinQueue()
+        #self.Taskmanager.joinQueue()
 
         self.InputQueue.join()
 
+        try:
+            self.np_bodies = self.np_bodies.get_np_bodies()
+        except:
+            a = True
 
         for _ in range(self.id_count):
             # Reasamble List
