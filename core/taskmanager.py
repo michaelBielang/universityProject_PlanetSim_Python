@@ -7,9 +7,9 @@ class TestClass():
 
     def get_np_bodies(self):
         return self.np_bodies
-    def set_new_pos_and_vel(self, id, item):
-        self.np_bodies[id][0:3] = item[0:3]
-        self.np_bodies[id][3:6] = item[3:6]
+
+    def set_np_bodies(self,bodies):
+        self.np_bodies = bodies
 
 class TaskManager(BaseManager):
     pass
@@ -27,6 +27,8 @@ class TaskManager(BaseManager):
                              callable = lambda:self.result_queue)
         TaskManager.register('get_np_bodies',
                              callable = lambda:self.np_bodies)
+        TaskManager.register('set_np_bodies',
+                             callable = lambda:self.np_bodies)
         self.m = TaskManager(address = ('', master_socket),
                         authkey = b'secret')
 
@@ -40,8 +42,7 @@ class TaskManager(BaseManager):
     def joinQueue(self):
         self.task_queue.join()
 
-    def clientConnect(self):
-        server_ip = "localhost"
+    def clientConnect(self,server_ip="localhos7t"):
         server_socket = int(12345)
         TaskManager.register('get_job_queue')
         TaskManager.register('get_result_queue')

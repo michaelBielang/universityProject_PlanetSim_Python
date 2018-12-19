@@ -6,6 +6,7 @@ import configparser
 
 from PyQt5 import QtWidgets, uic
 
+import core.context
 import core.simulation as s
 from gui import opengl_simulation
 from gui.galaxy_renderer import galaxy_renderer
@@ -82,6 +83,9 @@ class qt_ui(QtWidgets.QDialog):
         self.start_simulation(True)
 
     def client_connect(self):
+        context = core.context.context(1)
+        context.InitParralelWorkers(self.iptext.text())
+
         a=True
 
     def client_disconnect(self):

@@ -101,19 +101,18 @@ class context:
         for _ in range(self.executor):
             self.InputQueue().put(-1)
 
-    def InitParralelWorkers(self):
+    def InitParralelWorkers(self,server_ip="localhost"):
         """
         Starts the Workers,
         :param self: Needs a context
         :return: None
         """
 
-        self.Taskmanager = taskmanager.TaskManager().clientConnect()
-        self.InputQueue, self.result_queue = self.Taskmanager.get_job_queue(), self.Taskmanager.get_result_queue()
-        self.np_bodies = self.Taskmanager.get_np_bodies()
+        self.Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
+        self.InputQueue, self.OutputQueue = self.Taskmanager.get_job_queue(), self.Taskmanager.get_result_queue()
         #Setup Executor pool with number of CPU Cores
         self.executor = multiprocessing.pool.ThreadPool()
-        for i in range(1):
+        for i in range(multiprocessing.cpu_count()):
             self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.np_bodies,self.TimeStep))
 
 
@@ -170,5 +169,6 @@ class context:
             # Set new Position
             self.np_bodies[int(item[6])][0:3] = item[0:3]
             self.np_bodies[int(item[6])][3:6] = item[3:6]
+
 
         ## Step is finished
