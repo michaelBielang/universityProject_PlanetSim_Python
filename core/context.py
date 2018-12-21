@@ -17,7 +17,8 @@ class context:
         self.InputQueue = multiprocessing.JoinableQueue()
         self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
-        taskmanager.TaskManager().startup(self)
+        if num_planets != 1:
+            taskmanager.TaskManager().startup(self)
 
     def add(self, i, mass, radius):
         """
@@ -106,7 +107,7 @@ class context:
         Starts the Workers,
         :param self: Needs a context
         :return: None
-        """
+        """#
 
         self.Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
         self.InputQueue, self.OutputQueue = self.Taskmanager.get_job_queue(), self.Taskmanager.get_result_queue()
