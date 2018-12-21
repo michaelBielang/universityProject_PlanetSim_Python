@@ -114,7 +114,7 @@ class context:
         #Setup Executor pool with number of CPU Cores
         self.executor = multiprocessing.pool.ThreadPool()
         for i in range(multiprocessing.cpu_count()):
-            self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.np_bodies,self.TimeStep))
+            self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.Taskmanager.get_np_bodies(),self.TimeStep))
 
 
     @staticmethod
@@ -125,13 +125,11 @@ class context:
         :param OutputQueue:
         :return:
         """
+        np_proxy = np_bodies
         while True:
             #Check if new Work exists
             planet = InputQueue.get()
-            try:
-                np_bodies = np_bodies.get_np_bodies()
-            except:
-                a=True
+            np_bodies = np_proxy.get_np_bodies()
             if planet is not None:
                 #Do work
                 calc_acceleration = 0
@@ -159,17 +157,14 @@ class context:
 
         self.InputQueue.join()
 
-        try:
-            self.np_bodies = self.np_bodies.get_np_bodies()
-        except:
-            a = True
-
         for _ in range(self.id_count):
             # Reasamble List
             item = self.OutputQueue.get()
             # Set new Position
             self.np_bodies[int(item[6])][0:3] = item[0:3]
             self.np_bodies[int(item[6])][3:6] = item[3:6]
+
+        self.Taskmanager.get_np_bodies().set_np_bodies(self.np_bodies)
 
 
         ## Step is finished
