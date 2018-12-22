@@ -18,6 +18,7 @@ class context:
         self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
         self.cycle_id = 0
+        self.exit_notify = False
         if num_planets != 1:
             taskmanager.TaskManager().startup(self)
 
@@ -100,8 +101,9 @@ class context:
         if(self.executor is None):
             raise ValueError("InitParralelWorkers has to be called befor exiting the Workers")
 
-        for _ in range(self.executor):
-            self.InputQueue().put(-1)
+        self.exit_notify = True
+        #for _ in range(self.executor):
+        #    self.InputQueue().put(-1)
 
     def InitParralelWorkers(self,server_ip="localhost"):
         """
@@ -115,11 +117,11 @@ class context:
         #Setup Executor pool with number of CPU Cores
         self.executor = multiprocessing.pool.ThreadPool()
         for i in range(multiprocessing.cpu_count()):
-            self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.Taskmanager.get_np_bodies(),self.TimeStep))
+            self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.Taskmanager.get_np_bodies(),self.TimeStep,self.exit_notify))
 
 
     @staticmethod
-    def ExecutionWorker(InputQueue,OutputQueue,np_bodies,timeStep):
+    def ExecutionWorker(InputQueue,OutputQueue,np_bodies,timeStep,exit_notify):
         """
         Execution Worker for parralel Calculation of the Acceleration
         :param InputQueue:
@@ -131,7 +133,7 @@ class context:
         while True:
             #Check if new Work exists
             planet = InputQueue.get()
-            if planet is not None:
+            if planet is not None and exit_notify is not True:
                 #Do work
                 # Reduce Network Traffic
                 if(proxy.get_cycle_id()) != cycle_id:
@@ -146,9 +148,9 @@ class context:
                 result = np.append(result,np_bodies[planet][8])
                 OutputQueue.put(result)
                 InputQueue.task_done()
-            elif planet == -1:
+            elif exit_notify is True:
                 #Exit no Work anymore
-                InputQueue.task_done()
+                #InputQueue.task_done()
                 break
 
     def updateWorkers(self):
