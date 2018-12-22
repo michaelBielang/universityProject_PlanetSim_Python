@@ -85,6 +85,7 @@ class qt_ui(QtWidgets.QDialog):
     def client_connect(self):
         context = core.context.context(1)
         context.InitParralelWorkers(self.iptext.text())
+        self.connectbutton.setEnabled(False)
 
     def client_disconnect(self):
         a=True

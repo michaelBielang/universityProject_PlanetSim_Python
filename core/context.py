@@ -17,6 +17,7 @@ class context:
         self.InputQueue = multiprocessing.JoinableQueue()
         self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
+        self.cycle_id = 0
         if num_planets != 1:
             taskmanager.TaskManager().startup(self)
 
@@ -125,13 +126,17 @@ class context:
         :param OutputQueue:
         :return:
         """
-        np_proxy = np_bodies
+        proxy = np_bodies
+        cycle_id = -1
         while True:
             #Check if new Work exists
             planet = InputQueue.get()
-            np_bodies = np_proxy.get_np_bodies()
             if planet is not None:
                 #Do work
+                # Reduce Network Traffic
+                if(proxy.get_cycle_id()) != cycle_id:
+                    np_bodies = proxy.get_np_bodies()
+                    cycle_id = proxy.get_cycle_id()
                 calc_acceleration = 0
                 for other in np_bodies:
                     calc_acceleration += calc.calculate_velocity(np_bodies[planet], other)
@@ -164,6 +169,15 @@ class context:
             self.np_bodies[int(item[6])][0:3] = item[0:3]
             self.np_bodies[int(item[6])][3:6] = item[3:6]
 
+        #Create a Cycle ID for the worker to see if its the current iteration
+        #and not to load the full np array each time
+        if self.cycle_id == 1:
+            self.cycle_id = 0
+        else:
+            self.cycle_id = 1
+
+
+        self.Taskmanager.get_np_bodies().set_cycle_id(self.cycle_id)
         self.Taskmanager.get_np_bodies().set_np_bodies(self.np_bodies)
 
 

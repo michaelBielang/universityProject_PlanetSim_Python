@@ -2,14 +2,21 @@ from multiprocessing.managers import BaseManager
 from threading import Thread
 
 class TestClass():
-    def __init__(self, bodies):
-        self.np_bodies = bodies
+    def __init__(self, context):
+        self.np_bodies = context.np_bodies
+        self.cycle_id = context.cycle_id
 
     def get_np_bodies(self):
         return self.np_bodies
 
     def set_np_bodies(self,bodies):
         self.np_bodies = bodies
+
+    def get_cycle_id(self):
+        return self.cycle_id
+
+    def set_cycle_id(self,new_cycle_id):
+        self.cycle_id = new_cycle_id
 
 class TaskManager(BaseManager):
     pass
@@ -19,7 +26,7 @@ class TaskManager(BaseManager):
         master_socket = int(12345)
         self.task_queue = context.InputQueue
         self.result_queue = context.OutputQueue
-        self.np_bodies = TestClass(context.np_bodies)
+        self.np_bodies = TestClass(context)
 
         TaskManager.register('get_job_queue',
                              callable = lambda:self.task_queue)
