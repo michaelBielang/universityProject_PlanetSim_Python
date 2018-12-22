@@ -148,7 +148,7 @@ class context:
                 result = np.append(result,np_bodies[planet][8])
                 OutputQueue.put(result)
                 InputQueue.task_done()
-            elif exit_notify is True:
+            if exit_notify is True:
                 #Exit no Work anymore
                 #InputQueue.task_done()
                 break

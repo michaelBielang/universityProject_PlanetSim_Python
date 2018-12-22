@@ -41,6 +41,8 @@ class qt_ui(QtWidgets.QDialog):
         self.connectbutton.clicked.connect(self.client_connect)
         self.disconnectbutton.clicked.connect(self.client_disconnect)
 
+        self.disconnectbutton.setEnabled(False)
+
         #Ip/port aus configfile lesen
         conf = configparser.ConfigParser()
         conf.read("connection_config.ini")
@@ -86,9 +88,13 @@ class qt_ui(QtWidgets.QDialog):
         context = core.context.context(1)
         context.InitParralelWorkers(self.iptext.text())
         self.connectbutton.setEnabled(False)
+        self.diconnectbutton.setEnabled(True)
 
     def client_disconnect(self):
-        a=True
+        context = core.context.context(1)
+        context.ExitParralelWorkers()
+        self.connectbutton.setEnabled(True)
+        self.disconnectbutton.setEnabled(False)
 
     def start_simulation(self, sosy):
         """
