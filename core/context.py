@@ -1,9 +1,6 @@
-import multiprocessing
 
 import numpy as np
-import random
-from core import calc
-
+from . import calc
 
 class context:
     def __init__(self, num_planets):
@@ -36,11 +33,8 @@ class context:
         :return:
         """
         for planet in self.np_bodies:
-            pos = np.array([random.uniform(area_min, area_max),
-                            random.uniform(area_min, area_max),
-                            random.uniform(-0.000000000001, 0.000000000001)])
-            # pos = np.random.uniform(low=area_min, high=area_max, size=(1, 3))
-            planet[0:3] = pos[0]
+            planet[0:2] = np.random.uniform(low=area_min, high=area_max, size=(1,2))[0]
+            planet[2:2] = np.random.uniform(-0.000000000001, 0.000000000001)
 
         for planet in self.np_bodies:
             planet[3:6] = calc.calc_inital_velocity(planet, self)

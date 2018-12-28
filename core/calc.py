@@ -6,7 +6,6 @@ import numpy as np
 # The gravitational constant G
 G = 6.67428e-11
 
-
 def calc_inital_velocity(body, context):
     """
     Calculates the Initial Velocity of random bodies
@@ -22,19 +21,16 @@ def calc_inital_velocity(body, context):
 
     # get distance from current body from center
     body_distance = body[0:3] - pos_mass_centre
-    body_distance_length = np.sqrt(
-        body_distance.item(0)**2 + body_distance.item(1)**2 +
-        body_distance.item(2)**2)
+    body_distance_length = np.sqrt((body_distance*body_distance).sum())
 
-    body_distance_z = body_distance * z
-    body_distance_length_z = np.sqrt(
-        body_distance_z.item(0)**2 + body_distance_z.item(1)**2 +
-        body_distance_z.item(2)**2)
+    body_distance_z = np.cross(body_distance, z)
+    body_distance_length_z = np.sqrt((body_distance_z*body_distance_z).sum())
 
     mass_dif = context.mass_all - body[6]
-    veloccity = (mass_dif / context.mass_all) * \
+    velocity = (mass_dif / context.mass_all) * \
         math.sqrt(G * context.mass_all / body_distance_length)
-    return (body_distance * z / body_distance_length_z) * veloccity
+
+    return velocity / body_distance_length_z * body_distance_z
 
 
 def calculate_velocity(planet, other):
@@ -54,6 +50,6 @@ def calculate_velocity(planet, other):
 
         # F=m/a -> a=F/m
         # acc += f_vector/planet[6]
-        return (f_vector / planet[6])
+        return f_vector / planet[6]
 
     return 0
