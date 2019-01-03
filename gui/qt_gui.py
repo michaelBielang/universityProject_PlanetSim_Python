@@ -1,12 +1,20 @@
 """QT_GUI"""
 
 import multiprocessing
+import configparser
+
 
 from PyQt5 import QtWidgets, uic
 
+import core.context
 import core.simulation as s
 from gui import opengl_simulation
 from gui.galaxy_renderer import galaxy_renderer
+
+status_network_text = None
+
+def set_status_text(text):
+    status_network_text.setText(text)
 
 
 class qt_ui(QtWidgets.QDialog):
@@ -24,6 +32,7 @@ class qt_ui(QtWidgets.QDialog):
         uic.loadUi('Startmenu.ui', self)
         os.chdir(old_working_dir)
 
+        #Click Handler
         self.startButton.clicked.connect(self.start_random)
         self.sosy.clicked.connect(self.start_sosy)
         self.stopButton.clicked.connect(self.stop_simulation)
@@ -34,10 +43,20 @@ class qt_ui(QtWidgets.QDialog):
         self.maxrad.valueChanged.connect(self.update)
         self.maxdistslider.valueChanged.connect(self.update)
         self.sunmulslider.valueChanged.connect(self.update)
-        # self.SpeedSlider.valueChanged.connect(self.update)
-        # self.SunMassSlider.valueChanged.connect(self.update)
+        self.connectbutton.clicked.connect(self.client_connect)
+        self.disconnectbutton.clicked.connect(self.client_disconnect)
 
-        # self.SpeedLabel.valuechanged.connect(self.update())
+        global status_network_text
+        status_network_text = self.status
+
+        self.disconnectbutton.setEnabled(False)
+
+        #Ip/port aus configfile lesen
+        conf = configparser.ConfigParser()
+        conf.read("connection_config.ini")
+        self.iptext.setText(conf['Connection']['ip'])
+        self.porttext.setText(conf['Connection']['port'])
+
         self.renderer_conn, self.simulation_conn = None, None
         self.render_process = None
         self.simulation_process = None
@@ -72,6 +91,21 @@ class qt_ui(QtWidgets.QDialog):
         """
         self.start_simulation(True)
 
+    def client_connect(self):
+        context = core.context.context(1)
+        connected = context.InitParralelWorkers(self.iptext.text())
+        if connected:
+            status_network_text.setText("Connected to server")
+            self.connectbutton.setEnabled(False)
+            self.disconnectbutton.setEnabled(True)
+
+    def client_disconnect(self):
+        context = core.context.context(1)
+        context.ExitParralelWorkers()
+        status_network_text.setText("Disconnected from server")
+        self.connectbutton.setEnabled(True)
+        self.disconnectbutton.setEnabled(False)
+
     def start_simulation(self, sosy):
         """
             Start simulation and render process connected with a pipe.
@@ -81,11 +115,8 @@ class qt_ui(QtWidgets.QDialog):
         else:
             context = s.initialize_random(self.objcountslider.value(),
                                           -self.maxdistslider.value() * 10**9,
-                                          self.maxdistslider.value() * 10**9,
-                                          self.minrad.value() / 100,
-                                          self.maxrad.value() / 100,
-                                          self.minmass.value() * 10**24,
-                                          self.maxmass.value() * 10**24,)
+                                          self.maxdistslider.value() + 10**9,
+                                          self.maxmassslider.value() * 10**24)
 
         context.add_body_mass(0, self.sunmulslider.value() / 10)
         # context.add_speed(self.SpeedSlider.value()/10)

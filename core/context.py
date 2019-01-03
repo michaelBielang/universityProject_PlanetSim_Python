@@ -3,7 +3,9 @@ import multiprocessing
 import sys
 
 import numpy as np
-from . import calc
+
+from core import calc, taskmanager
+
 
 class context:
     def __init__(self, num_planets):
@@ -15,6 +17,10 @@ class context:
         self.InputQueue = multiprocessing.JoinableQueue()
         self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
+        self.cycle_id = 0
+        self.exit_notify = False
+        if num_planets != 1:
+            taskmanager.TaskManager().startup(self)
 
     def add(self, i, mass, radius):
         """
@@ -95,65 +101,90 @@ class context:
         if(self.executor is None):
             raise ValueError("InitParralelWorkers has to be called befor exiting the Workers")
 
-        for _ in range(self.executor):
-            self.InputQueue().put(-1)
+        self.exit_notify = True
+        #for _ in range(self.executor):
+        #    self.InputQueue().put(-1)
 
-    def InitParralelWorkers(self):
+    def InitParralelWorkers(self, server_ip="localhost"):
         """
         Starts the Workers,
         :param self: Needs a context
         :return: None
-        """
+        """#
 
-        #Setup Executor pool with number of CPU Cores
-        self.executor = multiprocessing.pool.ThreadPool()
-        for i in range(1):
-            self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.np_bodies,self.TimeStep))
+        self.Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
+        if self.Taskmanager is not None:
+            self.InputQueue, self.OutputQueue = self.Taskmanager.get_job_queue(), self.Taskmanager.get_result_queue()
+            #Setup Executor pool with number of CPU Cores
+            self.executor = multiprocessing.pool.ThreadPool()
+            for i in range(multiprocessing.cpu_count()):
+                self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.Taskmanager.get_np_bodies(),self.TimeStep,self.exit_notify))
+            return True
+        else:
+            return False
 
 
     @staticmethod
-    def ExecutionWorker(InputQueue,OutputQueue,np_bodies,timeStep):
+    def ExecutionWorker(InputQueue,OutputQueue,np_bodies,timeStep,exit_notify):
         """
         Execution Worker for parralel Calculation of the Acceleration
         :param InputQueue:
         :param OutputQueue:
         :return:
         """
+        proxy = np_bodies
+        cycle_id = -1
         while True:
             #Check if new Work exists
             planet = InputQueue.get()
-            if planet is not None:
+            if planet is not None and exit_notify is not True:
                 #Do work
+                # Reduce Network Traffic
+                if(proxy.get_cycle_id()) != cycle_id:
+                    np_bodies = proxy.get_np_bodies()
+                    cycle_id = proxy.get_cycle_id()
                 calc_acceleration = 0
                 for other in np_bodies:
-                    calc_acceleration += calc.calculate_velocity(planet, other)
-                new_velocity = planet[3:6] + timeStep * calc_acceleration
-                new_position = planet[0:3] + new_velocity*timeStep
+                    calc_acceleration += calc.calculate_velocity(np_bodies[planet], other)
+                new_velocity = np_bodies[planet][3:6] + timeStep * calc_acceleration
+                new_position = np_bodies[planet][0:3] + new_velocity*timeStep
                 result = np.append(new_position,new_velocity)
-                result = np.append(result,planet[8])
+                result = np.append(result,np_bodies[planet][8])
                 OutputQueue.put(result)
                 InputQueue.task_done()
-            elif planet == -1:
+            if exit_notify is True:
                 #Exit no Work anymore
-                InputQueue.task_done()
+                #InputQueue.task_done()
                 break
 
     def updateWorkers(self):
 
-        for work in self.np_bodies:
+        # Set Index as Work
+        for work in range(self.id_count):
             self.InputQueue.put(work)
 
         # Join my Workers together
+        #self.Taskmanager.joinQueue()
+
         self.InputQueue.join()
 
-
-        for _ in range(len(self.np_bodies)):
+        for _ in range(self.id_count):
             # Reasamble List
             item = self.OutputQueue.get()
             # Set new Position
             self.np_bodies[int(item[6])][0:3] = item[0:3]
             self.np_bodies[int(item[6])][3:6] = item[3:6]
 
+        #Create a Cycle ID for the worker to see if its the current iteration
+        #and not to load the full np array each time
+        if self.cycle_id == 1:
+            self.cycle_id = 0
+        else:
+            self.cycle_id = 1
+
+
+        self.Taskmanager.get_np_bodies().set_cycle_id(self.cycle_id)
+        self.Taskmanager.get_np_bodies().set_np_bodies(self.np_bodies)
+
+
         ## Step is finished
-
-
