@@ -1,4 +1,5 @@
 from multiprocessing.managers import BaseManager
+import multiprocessing
 from threading import Thread
 
 class TestClass():
@@ -49,11 +50,16 @@ class TaskManager(BaseManager):
     def joinQueue(self):
         self.task_queue.join()
 
-    def clientConnect(self,server_ip="localhos7t"):
-        server_socket = int(12345)
-        TaskManager.register('get_job_queue')
-        TaskManager.register('get_result_queue')
-        TaskManager.register('get_np_bodies')
-        m = TaskManager(address=(server_ip, server_socket), authkey = b'secret')
-        m.connect()
-        return m
+    def clientConnect(self,server_ip="localhost"):
+        try:
+            server_socket = int(12345)
+            TaskManager.register('get_job_queue')
+            TaskManager.register('get_result_queue')
+            TaskManager.register('get_np_bodies')
+            m = TaskManager(address=(server_ip, server_socket), authkey = b'secret')
+            m.connect()
+            return m
+        except:
+            from gui import qt_gui
+            qt_gui.set_status_text("Connection Failed!")
+            return None
