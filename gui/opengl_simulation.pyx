@@ -24,7 +24,7 @@ __FPS = 60
 #    time.sleep(1/__FPS)
 
 
-def _move_bodies(bodies, bodies_list, scale):
+def _move_bodies(bodies, bodies_list, scale, col = False):
     """
     Initialises the needed NP Array for transfering the Position of the
     Bodys over the Pipe
@@ -34,7 +34,10 @@ def _move_bodies(bodies, bodies_list, scale):
 
     if bodies is None:
         # If bodies is not initialised
-        bodies = np.zeros((bodies_list.__len__(), 4), dtype=np.float64)
+        if col:
+            bodies = np.zeros((bodies_list.__len__(), 8), dtype=np.float64)
+        else:
+            bodies = np.zeros((bodies_list.__len__(), 4), dtype=np.float64)
 
     for body_index in range(bodies_list.__len__()):
         bodies[body_index] = np.append(bodies_list[body_index][0:3] / scale,
