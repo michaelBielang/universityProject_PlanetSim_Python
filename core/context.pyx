@@ -105,7 +105,7 @@ class context:
         #for _ in range(self.executor):
         #    self.InputQueue().put(-1)
 
-    def InitParralelWorkers(self,server_ip="localhost"):
+    def InitParralelWorkers(self, server_ip="localhost"):
         """
         Starts the Workers,
         :param self: Needs a context
@@ -113,11 +113,15 @@ class context:
         """#
 
         self.Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
-        self.InputQueue, self.OutputQueue = self.Taskmanager.get_job_queue(), self.Taskmanager.get_result_queue()
-        #Setup Executor pool with number of CPU Cores
-        self.executor = multiprocessing.pool.ThreadPool()
-        for i in range(multiprocessing.cpu_count()):
-            self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.Taskmanager.get_np_bodies(),self.TimeStep,self.exit_notify))
+        if self.Taskmanager is not None:
+            self.InputQueue, self.OutputQueue = self.Taskmanager.get_job_queue(), self.Taskmanager.get_result_queue()
+            #Setup Executor pool with number of CPU Cores
+            self.executor = multiprocessing.pool.ThreadPool()
+            for i in range(multiprocessing.cpu_count()):
+                self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.Taskmanager.get_np_bodies(),self.TimeStep,self.exit_notify))
+            return True
+        else:
+            return False
 
 
     @staticmethod

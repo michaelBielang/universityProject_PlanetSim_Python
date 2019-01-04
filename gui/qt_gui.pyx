@@ -11,6 +11,11 @@ import core.simulation as s
 from gui import opengl_simulation
 from gui.galaxy_renderer import galaxy_renderer
 
+status_network_text = None
+
+def set_status_text(text):
+    status_network_text.setText(text)
+
 
 class qt_ui(QtWidgets.QDialog):
     def __init__(self):
@@ -40,6 +45,9 @@ class qt_ui(QtWidgets.QDialog):
         self.sunmulslider.valueChanged.connect(self.update)
         self.connectbutton.clicked.connect(self.client_connect)
         self.disconnectbutton.clicked.connect(self.client_disconnect)
+
+        global status_network_text
+        status_network_text = self.status
 
         self.disconnectbutton.setEnabled(False)
 
@@ -86,13 +94,16 @@ class qt_ui(QtWidgets.QDialog):
 
     def client_connect(self):
         context = core.context.context(1)
-        context.InitParralelWorkers(self.iptext.text())
-        self.connectbutton.setEnabled(False)
-        self.diconnectbutton.setEnabled(True)
+        connected = context.InitParralelWorkers(self.iptext.text())
+        if connected:
+            status_network_text.setText("Connected to server")
+            self.connectbutton.setEnabled(False)
+            self.disconnectbutton.setEnabled(True)
 
     def client_disconnect(self):
         context = core.context.context(1)
         context.ExitParralelWorkers()
+        status_network_text.setText("Disconnected from server")
         self.connectbutton.setEnabled(True)
         self.disconnectbutton.setEnabled(False)
 
