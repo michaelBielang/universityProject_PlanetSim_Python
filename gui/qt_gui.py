@@ -69,6 +69,7 @@ class qt_ui(QtWidgets.QDialog):
         # self.SpeedLabel.value = self.SpeedSlider.value()
         # self.SunMassLabel.value = self.SpeedSlider.value()
         self.objcountdisp.display(self.objcountslider.value())
+        self.maxmassdisp.display(self.maxmassslider.value())
         self.maxdistdisp.display(self.maxdistslider.value())
         self.sunmuldisp.display(self.sunmulslider.value() / 10)
 
@@ -116,7 +117,10 @@ class qt_ui(QtWidgets.QDialog):
             context = s.initialize_random(self.objcountslider.value(),
                                           -self.maxdistslider.value() * 10**9,
                                           self.maxdistslider.value() + 10**9,
-                                          self.maxmassslider.value() * 10**24)
+                                          self.minrad.value() / 100,
+                                          self.maxrad.value() / 100,
+                                          self.minmass.value() * 10**24,
+                                          self.maxmass.value() * 10**24,)
 
         context.add_body_mass(0, self.sunmulslider.value() / 10)
         # context.add_speed(self.SpeedSlider.value()/10)
