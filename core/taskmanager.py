@@ -1,4 +1,4 @@
-from multiprocessing.managers import BaseManager
+from multiprocessing.managers import BaseManager, Value
 import multiprocessing
 from threading import Thread
 
@@ -27,7 +27,11 @@ class TaskManager(BaseManager):
         master_socket = int(12345)
         self.task_queue = context.InputQueue
         self.result_queue = context.OutputQueue
-        self.np_bodies = TestClass(context)
+        #self.np_bodies = TestClass(context)
+        self.context = context
+        self.np_bodies = Value("d",value=context.np_bodies,lock=True)
+        self.cycle_id = Value("i",value=context.cycle_id,lock=True)
+        #test = self.v.set()
 
         TaskManager.register('get_job_queue',
                              callable = lambda:self.task_queue)
@@ -35,8 +39,9 @@ class TaskManager(BaseManager):
                              callable = lambda:self.result_queue)
         TaskManager.register('get_np_bodies',
                              callable = lambda:self.np_bodies)
-        TaskManager.register('set_np_bodies',
-                             callable = lambda:self.np_bodies)
+        TaskManager.register('get_cycle_id',
+                             callable = lambda:self.cycle_id)
+        TaskManager.register('set_np_bodies',)
         self.m = TaskManager(address = ('', master_socket),
                         authkey = b'secret')
 
@@ -46,6 +51,7 @@ class TaskManager(BaseManager):
     def runServer(self):
         print('starting queue server, socket')
         self.m.get_server().serve_forever()
+        self.m.get_server()
 
     def joinQueue(self):
         self.task_queue.join()

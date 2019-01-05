@@ -1,3 +1,5 @@
+import os
+from multiprocessing import Process
 from multiprocessing.pool import ThreadPool
 import multiprocessing
 import sys
@@ -114,10 +116,10 @@ class context:
         """#
 
         self.Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
-
         self.executor = multiprocessing.Pool()
         for i in range(multiprocessing.cpu_count()):
-            self.executor.apply_async(context.ExecutionWorker,args=(server_ip,self.TimeStep,self.exit_notify))
+            p = Process(target=context.ExecutionWorker,args=(server_ip,self.TimeStep,self.exit_notify))
+            p.start()
         return True
 
 
@@ -130,24 +132,34 @@ class context:
         :return:
         """
 
+        print("Execution Worker starteded with PID: " + str(os.getpid()))
+
         # Setup Proxy Connect
 
         Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
-        InputQueue, OutputQueue, np_bodies = Taskmanager.get_job_queue(), Taskmanager.get_result_queue(), Taskmanager.get_np_bodies()
+        InputQueue, OutputQueue, np_bodies_proxy, cycle_id_proxy = Taskmanager.get_job_queue(), Taskmanager.get_result_queue(), Taskmanager.get_np_bodies(), Taskmanager.get_cycle_id()
 
         #
 
-        proxy = np_bodies
+        #test = np_bodies_proxy._getvalue().get()
+        #test2 = np_bodies_proxy.get()
+        #np_bodies_proxy.set(np.zeros(9,dtype=np.float64))
+        #test2 = np_bodies_proxy.get()
         cycle_id = -1
+        #np_bodies = 0
+        #result = 0
+        #new_velocity = 0
+        #new_position = 0
+        #cdef int calc_acceleration = 0
         while True:
             #Check if new Work exists
             planet = InputQueue.get()
             if planet is not None and exit_notify is not True:
                 #Do work
                 # Reduce Network Traffic
-                if(proxy.get_cycle_id()) != cycle_id:
-                    np_bodies = proxy.get_np_bodies()
-                    cycle_id = proxy.get_cycle_id()
+                if(cycle_id_proxy.get()) != cycle_id:
+                 np_bodies = np_bodies_proxy.get()
+                 cycle_id = cycle_id_proxy.get()
                 calc_acceleration = 0
                 for other in np_bodies:
                     calc_acceleration += calc.calculate_velocity(np_bodies[planet], other)
@@ -164,6 +176,8 @@ class context:
 
     def updateWorkers(self):
 
+        #self.Taskmanager.get_np_bodies().set(self.np_bodies)
+        #self.Taskmanager.get_cycle_id().set(self.cycle_id)
         # Set Index as Work
         for work in range(self.id_count):
             self.InputQueue.put(work)
@@ -187,11 +201,14 @@ class context:
         else:
             self.cycle_id = 1
 
-        #self.taskmanager_class.np_bodies.set_np_bodies(self.np_bodies)
+        #self.taskmanager_class.context = self
+        #self.taskmanager_class.set_np_bodies(self.np_bodies)
         #self.taskmanager_class.np_bodies.set_cycle_id(self.cycle_id)
         #test = self.Taskmanager
-        self.Taskmanager.get_np_bodies().set_cycle_id(self.cycle_id)
-        self.Taskmanager.get_np_bodies().set_np_bodies(self.np_bodies)
+        #self.taskmanager_class.np_bodies.set(self.np_bodies)
+        #self.taskmanager_class.cycle_id.set(self.cycle_id)
+        self.Taskmanager.get_np_bodies().set(self.np_bodies)
+        self.Taskmanager.get_cycle_id().set(self.cycle_id)
 
 
         ## Step is finished
