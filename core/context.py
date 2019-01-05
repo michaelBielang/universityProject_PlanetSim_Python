@@ -19,8 +19,9 @@ class context:
         self.id_count = 0
         self.cycle_id = 0
         self.exit_notify = False
+        self.taskmanager_class = taskmanager.TaskManager()
         if num_planets != 1:
-            taskmanager.TaskManager().startup(self)
+            self.taskmanager_class.startup(self)
 
     def add(self, i, mass, radius):
         """
@@ -113,25 +114,29 @@ class context:
         """#
 
         self.Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
-        if self.Taskmanager is not None:
-            self.InputQueue, self.OutputQueue = self.Taskmanager.get_job_queue(), self.Taskmanager.get_result_queue()
-            #Setup Executor pool with number of CPU Cores
-            self.executor = multiprocessing.pool.ThreadPool()
-            for i in range(multiprocessing.cpu_count()):
-                self.executor.apply_async(context.ExecutionWorker,args=(self.InputQueue,self.OutputQueue,self.Taskmanager.get_np_bodies(),self.TimeStep,self.exit_notify))
-            return True
-        else:
-            return False
+
+        self.executor = multiprocessing.Pool()
+        for i in range(multiprocessing.cpu_count()):
+            self.executor.apply_async(context.ExecutionWorker,args=(server_ip,self.TimeStep,self.exit_notify))
+        return True
 
 
     @staticmethod
-    def ExecutionWorker(InputQueue,OutputQueue,np_bodies,timeStep,exit_notify):
+    def ExecutionWorker(server_ip,timeStep,exit_notify):
         """
         Execution Worker for parralel Calculation of the Acceleration
         :param InputQueue:
         :param OutputQueue:
         :return:
         """
+
+        # Setup Proxy Connect
+
+        Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
+        InputQueue, OutputQueue, np_bodies = Taskmanager.get_job_queue(), Taskmanager.get_result_queue(), Taskmanager.get_np_bodies()
+
+        #
+
         proxy = np_bodies
         cycle_id = -1
         while True:
@@ -182,7 +187,9 @@ class context:
         else:
             self.cycle_id = 1
 
-
+        #self.taskmanager_class.np_bodies.set_np_bodies(self.np_bodies)
+        #self.taskmanager_class.np_bodies.set_cycle_id(self.cycle_id)
+        #test = self.Taskmanager
         self.Taskmanager.get_np_bodies().set_cycle_id(self.cycle_id)
         self.Taskmanager.get_np_bodies().set_np_bodies(self.np_bodies)
 
