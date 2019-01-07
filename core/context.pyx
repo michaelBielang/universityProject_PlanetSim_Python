@@ -1,3 +1,5 @@
+import os
+from multiprocessing import Process
 from multiprocessing.pool import ThreadPool
 import multiprocessing
 import sys
@@ -152,12 +154,14 @@ class context:
         #test2 = data_proxy.get()
         #data_proxy.set(np.zeros(9,dtype=np.float64))
         #test2 = data_proxy.get()
-        cycle_id = -1
-        #np_bodies = 0
-        #result = 0
-        #new_velocity = 0
-        #new_position = 0
+        cdef int cycle_id = -1
+        cdef int master_cycle = -1
         #cdef int calc_acceleration = 0
+        cdef int planet_count = len(data_proxy.get('p'))
+        #np_bodies = 0
+        result = 0
+        new_velocity = 0
+        new_position = 0
         while True:
             #Check if new Work exists
             planet = InputQueue.get()
@@ -171,8 +175,8 @@ class context:
                     cycle_id = master_cycle
                 calc_acceleration = 0
                 #t2 = time.time()
-                for other in np_bodies:
-                    calc_acceleration += calc.calculate_velocity(np_bodies[planet], other)
+                for other in range(planet_count):
+                    calc_acceleration += calc.calculate_velocity(np_bodies[planet], np_bodies[other])
                 new_velocity = np_bodies[planet][3:6] + timeStep * calc_acceleration
                 new_position = np_bodies[planet][0:3] + new_velocity*timeStep
                 result = np.append(new_position,new_velocity)

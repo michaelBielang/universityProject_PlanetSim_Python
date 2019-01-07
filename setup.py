@@ -2,7 +2,7 @@ from distutils.core import setup
 from Cython.Build import cythonize
 
 #modules = ("core/context.pyx", "core/calc.pyx")
-modules = ("core/calc.pyx")
+modules = ("core/calc.pyx","core/taskmanager.pyx","core/context.pyx")
 
 
 setup(
