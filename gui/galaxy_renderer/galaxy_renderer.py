@@ -35,9 +35,9 @@ from gui.galaxy_renderer.simulation_constants import END_MESSAGE
 
 # initial window parameters
 _WINDOW_SIZE = (512, 512)
-_WINDOW_POSITION = (200, 200)
+_WINDOW_POSITION = (100, 100)
 _LIGHT_POSITION = (2, 2, 3)
-_CAMERA_POSITION = (0, 0, 5)
+_CAMERA_POSITION = (0, 0, 2)
 
 
 class GalaxyRenderer:
