@@ -16,11 +16,12 @@ class context:
         self.context = []
         self.np_bodies = np.zeros((num_planets, 9), dtype=np.float64)
         self.SCALE_FACTOR = 0.0
-        self.TimeStep = 3000
+        self.TimeStep = 10000
         self.InputQueue = multiprocessing.JoinableQueue()
         self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
         self.cycle_id = 0
+        self.connected_workers = 0
         self.exit_notify = False
         self.taskmanager_class = taskmanager.TaskManager()
         if num_planets != 1:
@@ -133,12 +134,20 @@ class context:
         :return:
         """
 
-        print("Execution Worker starteded with PID: " + str(os.getpid()))
+        #print("Execution Worker started with PID: " + str(os.getpid()))
 
         # Setup Proxy Connect
-
         Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
         InputQueue, OutputQueue, data_proxy, cycle_proxy = Taskmanager.get_job_queue(), Taskmanager.get_result_queue(), Taskmanager.get_data(), Taskmanager.get_cycle()
+
+        # Write Info to Master
+        worker_info_proxy = Taskmanager.set_worker_info()
+        import socket
+        hostname = socket.gethostname()
+
+        # ""=""Execution Worker started with PID: " + str(os.getpid()) + "on Host" + hostname
+
+        worker_info_proxy.update({hostname + "/" + str(os.getpid()):(hostname,os.getpid())})
 
         #
         #test2 = data_proxy.get()
@@ -156,13 +165,13 @@ class context:
             if planet is not None and exit_notify is not True:
                 #Do work
                 # Reduce Network Traffic
-                t1 = time.time()
+                #t1 = time.time()
                 master_cycle = cycle_proxy.get('c')
                 if master_cycle != cycle_id:
                     np_bodies = data_proxy.get('p')
                     cycle_id = master_cycle
                 calc_acceleration = 0
-                t2 = time.time()
+                #t2 = time.time()
                 for other in np_bodies:
                     calc_acceleration += calc.calculate_velocity(np_bodies[planet], other)
                 new_velocity = np_bodies[planet][3:6] + timeStep * calc_acceleration
@@ -171,10 +180,10 @@ class context:
                 result = np.append(result,np_bodies[planet][8])
                 OutputQueue.put(result)
                 InputQueue.task_done()
-                t3 = time.time()
+                #t3 = time.time()
 
-                print("Get Data" +str(t2-t1))
-                print("Calc Data" +str(t3-t2))
+                #print("Get Data" +str(t2-t1))
+                #print("Calc Data" +str(t3-t2))
             if exit_notify is True:
                 #Exit no Work anymore
                 #InputQueue.task_done()
@@ -184,6 +193,14 @@ class context:
 
         self.taskmanager_class.dict_position["p"] = self.np_bodies
         self.taskmanager_class.dict_cycle["c"] = self.cycle_id
+
+        workers = len(self.taskmanager_class.dict_worker_info)
+
+        if  workers != self.connected_workers:
+            self.taskmanager_class.print_worker_info(self.connected_workers,workers)
+            self.connected_workers = workers
+
+        #print(self.taskmanager_class.dict_worker_info)
 
 
         for work in range(self.id_count):

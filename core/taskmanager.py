@@ -3,23 +3,6 @@ from multiprocessing.managers import BaseManager, Value
 import multiprocessing
 from threading import Thread
 
-class TestClass():
-    def __init__(self, context):
-        self.np_bodies = context.np_bodies
-        self.cycle_id = context.cycle_id
-
-    def get_data(self):
-        return self.np_bodies
-
-    def set_np_bodies(self,bodies):
-        self.np_bodies = bodies
-
-    def get_cycle_id(self):
-        return self.cycle_id
-
-    def set_cycle_id(self,new_cycle_id):
-        self.cycle_id = new_cycle_id
-
 class TaskManager(BaseManager):
     pass
 
@@ -28,14 +11,10 @@ class TaskManager(BaseManager):
         master_socket = int(12345)
         self.task_queue = context.InputQueue
         self.result_queue = context.OutputQueue
-        #self.np_bodies = TestClass(context)
-        self.context = context
-        self.np_bodies = Value("d",value=context.np_bodies,lock=False)
-        self.cycle_id = Value("i",value=context.cycle_id,lock=False)
         manager = Manager()
         self.dict_position = manager.dict()
         self.dict_cycle = manager.dict()
-        #test = self.v.set()
+        self.dict_worker_info = manager.dict()
 
         TaskManager.register('get_job_queue',
                              callable = lambda:self.task_queue)
@@ -45,19 +24,20 @@ class TaskManager(BaseManager):
                              callable = lambda:self.dict_position)
         TaskManager.register('get_cycle',
                              callable = lambda:self.dict_cycle)
+        TaskManager.register('set_worker_info',
+                             callable = lambda:self.dict_worker_info)
         self.m = TaskManager(address = ('', master_socket),
                         authkey = b'secret')
+
 
         thread = Thread(target=self.runServer)
         thread.start()
 
     def runServer(self):
-        print('starting queue server, socket')
+        print('Starting Server with ID :' + str(self.m.address))
         self.m.get_server().serve_forever()
         self.m.get_server()
 
-    def joinQueue(self):
-        self.task_queue.join()
 
     def clientConnect(self,server_ip="localhost"):
         try:
@@ -69,3 +49,8 @@ class TaskManager(BaseManager):
             from gui import qt_gui
             qt_gui.set_status_text("Connection Failed!")
             return None
+
+    def print_worker_info(self,old,new):
+        for i in range(old,new):
+            print("Execution Worker connected with PID: " + str(self.dict_worker_info.values()[i][1]) + " on Host " + str(self.dict_worker_info.values()[i][0]))
+        print("Currently are " + str(new) + "connected to the Master")
