@@ -1,4 +1,5 @@
 import os
+import time
 from multiprocessing import Process
 from multiprocessing.pool import ThreadPool
 import multiprocessing
@@ -15,7 +16,7 @@ class context:
         self.context = []
         self.np_bodies = np.zeros((num_planets, 9), dtype=np.float64)
         self.SCALE_FACTOR = 0.0
-        self.TimeStep = 30000
+        self.TimeStep = 3000
         self.InputQueue = multiprocessing.JoinableQueue()
         self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
@@ -137,14 +138,12 @@ class context:
         # Setup Proxy Connect
 
         Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
-        InputQueue, OutputQueue, np_bodies_proxy, cycle_id_proxy = Taskmanager.get_job_queue(), Taskmanager.get_result_queue(), Taskmanager.get_np_bodies(), Taskmanager.get_cycle_id()
+        InputQueue, OutputQueue, data_proxy, cycle_proxy = Taskmanager.get_job_queue(), Taskmanager.get_result_queue(), Taskmanager.get_data(), Taskmanager.get_cycle()
 
         #
-
-        #test = np_bodies_proxy._getvalue().get()
-        #test2 = np_bodies_proxy.get()
-        #np_bodies_proxy.set(np.zeros(9,dtype=np.float64))
-        #test2 = np_bodies_proxy.get()
+        #test2 = data_proxy.get()
+        #data_proxy.set(np.zeros(9,dtype=np.float64))
+        #test2 = data_proxy.get()
         cycle_id = -1
         #np_bodies = 0
         #result = 0
@@ -157,10 +156,13 @@ class context:
             if planet is not None and exit_notify is not True:
                 #Do work
                 # Reduce Network Traffic
-                if(cycle_id_proxy.get()) != cycle_id:
-                 np_bodies = np_bodies_proxy.get()
-                 cycle_id = cycle_id_proxy.get()
+                t1 = time.time()
+                master_cycle = cycle_proxy.get('c')
+                if master_cycle != cycle_id:
+                    np_bodies = data_proxy.get('p')
+                    cycle_id = master_cycle
                 calc_acceleration = 0
+                t2 = time.time()
                 for other in np_bodies:
                     calc_acceleration += calc.calculate_velocity(np_bodies[planet], other)
                 new_velocity = np_bodies[planet][3:6] + timeStep * calc_acceleration
@@ -169,6 +171,10 @@ class context:
                 result = np.append(result,np_bodies[planet][8])
                 OutputQueue.put(result)
                 InputQueue.task_done()
+                t3 = time.time()
+
+                print("Get Data" +str(t2-t1))
+                print("Calc Data" +str(t3-t2))
             if exit_notify is True:
                 #Exit no Work anymore
                 #InputQueue.task_done()
@@ -176,19 +182,18 @@ class context:
 
     def updateWorkers(self):
 
-        #self.Taskmanager.get_np_bodies().set(self.np_bodies)
-        #self.Taskmanager.get_cycle_id().set(self.cycle_id)
-        # Set Index as Work
+        self.taskmanager_class.dict_position["p"] = self.np_bodies
+        self.taskmanager_class.dict_cycle["c"] = self.cycle_id
+
+
         for work in range(self.id_count):
             self.InputQueue.put(work)
 
         # Join my Workers together
-        #self.Taskmanager.joinQueue()
-
         self.InputQueue.join()
 
+        # Reasamble List
         for _ in range(self.id_count):
-            # Reasamble List
             item = self.OutputQueue.get()
             # Set new Position
             self.np_bodies[int(item[6])][0:3] = item[0:3]
@@ -200,15 +205,5 @@ class context:
             self.cycle_id = 0
         else:
             self.cycle_id = 1
-
-        #self.taskmanager_class.context = self
-        #self.taskmanager_class.set_np_bodies(self.np_bodies)
-        #self.taskmanager_class.np_bodies.set_cycle_id(self.cycle_id)
-        #test = self.Taskmanager
-        #self.taskmanager_class.np_bodies.set(self.np_bodies)
-        #self.taskmanager_class.cycle_id.set(self.cycle_id)
-        self.Taskmanager.get_np_bodies().set(self.np_bodies)
-        self.Taskmanager.get_cycle_id().set(self.cycle_id)
-
 
         ## Step is finished

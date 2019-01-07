@@ -1,10 +1,10 @@
 from distutils.core import setup
 from Cython.Build import cythonize
 
-modules = ("core/context.pyx", "core/calc.pyx",
-           )
+#modules = ("core/context.pyx", "core/calc.pyx")
+modules = ("core/calc.pyx")
 
 
 setup(
-    ext_modules = cythonize(modules,annotate=True)
+    ext_modules = cythonize(modules, annotate=True)
 )

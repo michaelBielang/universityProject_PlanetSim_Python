@@ -69,7 +69,7 @@ class qt_ui(QtWidgets.QDialog):
         # self.SpeedLabel.value = self.SpeedSlider.value()
         # self.SunMassLabel.value = self.SpeedSlider.value()
         self.objcountdisp.display(self.objcountslider.value())
-        self.maxmassdisp.display(self.maxmassslider.value())
+        #self.maxmassdisp.display(self.maxmassslider.value())
         self.maxdistdisp.display(self.maxdistslider.value())
         self.sunmuldisp.display(self.sunmulslider.value() / 10)
 
