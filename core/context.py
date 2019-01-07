@@ -1,6 +1,3 @@
-import os
-import time
-from multiprocessing import Process
 from multiprocessing.pool import ThreadPool
 import multiprocessing
 import sys
@@ -16,7 +13,8 @@ class context:
         self.context = []
         self.np_bodies = np.zeros((num_planets, 9), dtype=np.float64)
         self.SCALE_FACTOR = 0.0
-        self.TimeStep = 10000
+        self.SCALE_Z = 0.2
+        self.TimeStep = 30000
         self.InputQueue = multiprocessing.JoinableQueue()
         self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
@@ -52,9 +50,10 @@ class context:
         :param area_max:
         :return:
         """
-        for planet in self.np_bodies:
-            planet[0:2] = np.random.uniform(low=area_min, high=area_max, size=(1,2))[0]
-            planet[2:2] = np.random.uniform(-0.000000000001, 0.000000000001)
+        for i in range(1, len(self.np_bodies)):
+            self.np_bodies[i][0:3] = np.asarray([np.random.uniform(low=area_min, high=area_max),
+                                      np.random.uniform(low=area_min, high=area_max),
+                                      np.random.uniform(low=area_min, high=area_max) * self.SCALE_Z])
 
         for planet in self.np_bodies:
             planet[3:6] = calc.calc_inital_velocity(planet, self)

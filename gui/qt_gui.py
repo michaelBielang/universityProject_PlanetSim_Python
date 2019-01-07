@@ -116,7 +116,7 @@ class qt_ui(QtWidgets.QDialog):
         else:
             context = s.initialize_random(self.objcountslider.value(),
                                           -self.maxdistslider.value() * 10**9,
-                                          self.maxdistslider.value() + 10**9,
+                                          self.maxdistslider.value() * 10**9,
                                           self.minrad.value() / 100,
                                           self.maxrad.value() / 100,
                                           self.minmass.value() * 10**24,
