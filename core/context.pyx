@@ -108,8 +108,8 @@ class context:
         Exit the Parralel Workers
         :return:
         """
-        if(self.executor is None):
-            raise ValueError("InitParralelWorkers has to be called befor exiting the Workers")
+        #if(self.executor is None):
+        #    raise ValueError("InitParralelWorkers has to be called befor exiting the Workers")
 
         self.exit_notify = True
         #for _ in range(self.executor):
@@ -177,19 +177,22 @@ class context:
         cdef double[3] calc_acceleration = np.zeros(3)
         cdef double[:] planet = np.zeros(9)
         cdef double[:] other = np.zeros(9)
-        #cdef double[3] current_calc
         cdef int planet_count = len(data_proxy.get('p'))
         cdef double[:, :] np_bodies = np.zeros_like(data_proxy.get('p'))
         cdef double[7] np_body = np.zeros(7)
-        #cdef planet
         cdef int other_num = 0
         cdef int planet_num = 0
-        #np_bodies = 0
-        result = 0
         cdef double[3] new_velocity
-        new_position = 0
         while True:
             #Check if new Work exists
+            #Reset the Calculation Vectors
+            calc_acceleration[0] = 0
+            calc_acceleration[1] = 0
+            calc_acceleration[2] = 0
+            #f_vector[0] = 0
+            #f_vector[1] = 0
+            #f_vector[2] = 0
+            #f_total = 0
             planet_num = InputQueue.get()
             if exit_notify is not True:
                 #Do work
@@ -200,14 +203,6 @@ class context:
                     np_bodies = data_proxy.get('p')
                     cycle_id = master_cycle
                 #t2 = time.time()
-
-                calc_acceleration[0] = 0
-                calc_acceleration[1] = 0
-                calc_acceleration[2] = 0
-                f_vector[0] = 0
-                f_vector[1] = 0
-                f_vector[2] = 0
-                f_total = 0
                 #planet[:] = 0
 
 
