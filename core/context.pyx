@@ -21,7 +21,7 @@ class context:
         self.SCALE_FACTOR = 0.0
         self.SCALE_Z = 0.2
         self.TimeStep = 30000
-        self.InputQueue = multiprocessing.JoinableQueue()
+        self.InputQueue = multiprocessing.Queue()
         self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
         self.cycle_id = 0
@@ -269,7 +269,7 @@ class context:
                 #print(np.array(np_body))
 
                 OutputQueue.put(np.array(np_body))
-                InputQueue.task_done()
+                #InputQueue.task_done()
                 #t3 = time.time()
 
                 #print("Get Data" +str(t2-t1))
@@ -296,17 +296,22 @@ class context:
         for work in range(self.id_count):
             self.InputQueue.put(work)
 
-        # Join my Workers together
-        self.InputQueue.join()
 
         # Reasamble List
-        for _ in range(self.id_count):
-            item = self.OutputQueue.get()
+        cdef int i = 0
+        #cdef current_item
+
+        while i != self.id_count:
+            item = self.OutputQueue.get(block=True)
             # Set new Position
             #print(self.np_bodies)
             #print(item)
             self.np_bodies[int(item[6])][0:3] = item[0:3]
             self.np_bodies[int(item[6])][3:6] = item[3:6]
+            i += 1
+
+        ## Join my Workers together
+        #self.InputQueue.join()
 
         #Create a Cycle ID for the worker to see if its the current iteration
         #and not to load the full np array each time
