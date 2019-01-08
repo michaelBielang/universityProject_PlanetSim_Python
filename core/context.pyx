@@ -195,9 +195,9 @@ class context:
             #f_vector[1] = 0
             #f_vector[2] = 0
             #f_total = 0
-            planet_num = InputQueue.get()
-
             if exit_notify.value is 0:
+                planet_num = InputQueue.get()
+
                 #Do work
                 # Reduce Network Traffic
                 #t1 = time.time()
