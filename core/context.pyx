@@ -1,12 +1,16 @@
+import cython
 import os
 from multiprocessing import Process
 from multiprocessing.pool import ThreadPool
 import multiprocessing
 import sys
+cdef double G = 6.67428e-11
+cimport libc.math as math
 
 import numpy as np
 
 from core import calc, taskmanager
+from calc cimport calculate_velocity
 
 
 class context:
@@ -126,8 +130,12 @@ class context:
         return True
 
 
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.nonecheck(False)
+    @cython.cdivision(True)
     @staticmethod
-    def ExecutionWorker(server_ip,timeStep,exit_notify):
+    def ExecutionWorker(server_ip,timeStep_to_calc,exit_notify):
         """
         Execution Worker for parralel Calculation of the Acceleration
         :param InputQueue:
@@ -154,18 +162,34 @@ class context:
         #test2 = data_proxy.get()
         #data_proxy.set(np.zeros(9,dtype=np.float64))
         #test2 = data_proxy.get()
+        #
+        cdef double[3] distance_vector = np.zeros(3)
+        cdef double distance_length
+        cdef double f_total
+        cdef int timeStep = timeStep_to_calc
+        cdef double[3] f_vector = np.zeros(3)
+        #cdef double[3] return_value
+        #
         cdef int cycle_id = -1
         cdef int master_cycle = -1
-        #cdef int calc_acceleration = 0
+        cdef double[3] calc_acceleration = np.zeros(3)
+        cdef double[:] planet = np.zeros(9)
+        cdef double[:] other = np.zeros(9)
+        #cdef double[3] current_calc
         cdef int planet_count = len(data_proxy.get('p'))
+        cdef double[:, :] np_bodies = np.zeros_like(data_proxy.get('p'))
+        cdef double[7] np_body = np.zeros(7)
+        #cdef planet
+        cdef int other_num = 0
+        cdef int planet_num = 0
         #np_bodies = 0
         result = 0
-        new_velocity = 0
+        cdef double[3] new_velocity
         new_position = 0
         while True:
             #Check if new Work exists
-            planet = InputQueue.get()
-            if planet is not None and exit_notify is not True:
+            planet_num = InputQueue.get()
+            if exit_notify is not True:
                 #Do work
                 # Reduce Network Traffic
                 #t1 = time.time()
@@ -173,15 +197,78 @@ class context:
                 if master_cycle != cycle_id:
                     np_bodies = data_proxy.get('p')
                     cycle_id = master_cycle
-                calc_acceleration = 0
                 #t2 = time.time()
-                for other in range(planet_count):
-                    calc_acceleration += calc.calculate_velocity(np_bodies[planet], np_bodies[other])
-                new_velocity = np_bodies[planet][3:6] + timeStep * calc_acceleration
-                new_position = np_bodies[planet][0:3] + new_velocity*timeStep
-                result = np.append(new_position,new_velocity)
-                result = np.append(result,np_bodies[planet][8])
-                OutputQueue.put(result)
+
+                calc_acceleration[0] = 0
+                calc_acceleration[1] = 0
+                calc_acceleration[2] = 0
+                f_vector[0] = 0
+                f_vector[1] = 0
+                f_vector[2] = 0
+                f_total = 0
+                #planet[:] = 0
+
+
+
+                for other_num in range(planet_count):
+
+                    with nogil:
+                        other = np_bodies[other_num]
+                        planet = np_bodies[planet_num]
+
+                        distance_vector[0] = other[0] - planet[0]
+                        distance_vector[1] = other[1] - planet[1]
+                        distance_vector[2] = other[2] - planet[2]
+
+
+                        # math is ok because we change math to cimport libc.math as math
+
+                        distance_length = math.sqrt(
+                            distance_vector[0]*distance_vector[0] +
+                            distance_vector[1]*distance_vector[1] +
+                            distance_vector[2]*distance_vector[2])
+
+                        # Only calculate force if bodies not on same position
+                        # (divide by zero)
+
+                        #print(distance_length)
+
+                        if distance_length != 0:
+
+                            # calculate gravity force
+                            f_total = G * planet[6] * other[6] / (distance_length*distance_length)
+                            f_vector[0] = (distance_vector[0] / distance_length) * f_total
+                            f_vector[1] = (distance_vector[1] / distance_length) * f_total
+                            f_vector[2] = (distance_vector[2] / distance_length) * f_total
+                            # F=m/a -> a=F/m
+                            # acc += f_vector/planet[6]
+
+                        calc_acceleration[0] += f_vector[0] / planet[6]
+                        calc_acceleration[1] += f_vector[1] / planet[6]
+                        calc_acceleration[2] += f_vector[2] / planet[6]
+
+                        #current_calc = calc.calculate_velocity(planet, other)
+                        #calc_acceleration[0] = current_calc[0]
+                        #calc_acceleration[1] = current_calc[1]
+                        #calc_acceleration[2] = current_calc[2]
+
+                    #new_velocity = planet[3:6] + timeStep * calc_acceleration
+
+                    np_body[3] = planet[3] + timeStep * calc_acceleration[0]
+                    np_body[4] = planet[4] + timeStep * calc_acceleration[1]
+                    np_body[5] = planet[5] + timeStep * calc_acceleration[2]
+
+                    #new_position = planet[0:3] + new_velocity*timeStep
+
+                    np_body[0] = planet[0] + np_body[3]*timeStep
+                    np_body[1] = planet[1] + np_body[4]*timeStep
+                    np_body[2] = planet[2] + np_body[5]*timeStep
+
+                    np_body[6] = planet[8]
+
+                #print(np.array(np_body))
+
+                OutputQueue.put(np.array(np_body))
                 InputQueue.task_done()
                 #t3 = time.time()
 
@@ -216,6 +303,8 @@ class context:
         for _ in range(self.id_count):
             item = self.OutputQueue.get()
             # Set new Position
+            #print(self.np_bodies)
+            #print(item)
             self.np_bodies[int(item[6])][0:3] = item[0:3]
             self.np_bodies[int(item[6])][3:6] = item[3:6]
 

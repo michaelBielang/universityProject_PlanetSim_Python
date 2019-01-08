@@ -39,7 +39,7 @@ def calc_inital_velocity(body, context):
 @cython.wraparound(False)
 @cython.nonecheck(False)
 @cython.cdivision(True)
-def calculate_velocity(double[:] planet, double[:] other):
+cdef double[:] calculate_velocity(double[:] planet, double[:] other):
     """Set velocity based on every planet in the system."""
 
     # Changed to Memory Views for Cython, no numpy used
