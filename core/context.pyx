@@ -12,6 +12,8 @@ import numpy as np
 from core import calc, taskmanager
 from calc cimport calculate_velocity
 
+cdef exit_notify = multiprocessing.Value('i',0)
+
 
 class context:
     def __init__(self, num_planets):
@@ -111,7 +113,7 @@ class context:
         #if(self.executor is None):
         #    raise ValueError("InitParralelWorkers has to be called befor exiting the Workers")
 
-        self.exit_notify = True
+        exit_notify.value = 1
         #for _ in range(self.executor):
         #    self.InputQueue().put(-1)
 
@@ -125,7 +127,7 @@ class context:
         self.Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
         self.executor = multiprocessing.Pool()
         for i in range(multiprocessing.cpu_count()):
-            p = Process(target=context.ExecutionWorker,args=(server_ip,self.TimeStep,self.exit_notify))
+            p = Process(target=context.ExecutionWorker,args=(server_ip,self.TimeStep))
             p.start()
         return True
 
@@ -137,7 +139,7 @@ class context:
     @cython.nonecheck(False)
     @cython.cdivision(True)
     @staticmethod
-    def ExecutionWorker(server_ip,timeStep_to_calc,exit_notify):
+    def ExecutionWorker(server_ip,timeStep_to_calc):
         """
         Execution Worker for parralel Calculation of the Acceleration
         :param InputQueue:
@@ -145,7 +147,7 @@ class context:
         :return:
         """
 
-        #print("Execution Worker started with PID: " + str(os.getpid()))
+        print("Local Execution Worker started with PID: " + str(os.getpid()))
 
         # Setup Proxy Connect
         Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
@@ -194,7 +196,8 @@ class context:
             #f_vector[2] = 0
             #f_total = 0
             planet_num = InputQueue.get()
-            if exit_notify is not True:
+
+            if exit_notify.value is 0:
                 #Do work
                 # Reduce Network Traffic
                 #t1 = time.time()
@@ -204,8 +207,6 @@ class context:
                     cycle_id = master_cycle
                 #t2 = time.time()
                 #planet[:] = 0
-
-
 
                 for other_num in range(planet_count):
 
@@ -271,9 +272,10 @@ class context:
 
                 #print("Get Data" +str(t2-t1))
                 #print("Calc Data" +str(t3-t2))
-            if exit_notify is True:
+            else:
                 #Exit no Work anymore
                 #InputQueue.task_done()
+                print("Local Execution Worker Exited with PID: " + str(os.getpid()))
                 break
 
     @cython.initializedcheck(False)

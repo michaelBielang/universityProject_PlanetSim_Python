@@ -54,6 +54,16 @@ class TaskManager(BaseManager):
     def clientConnect(self,server_ip="localhost"):
         try:
             server_socket = int(12345)
+            TaskManager.register('get_job_queue',
+                                 callable = lambda:self.task_queue)
+            TaskManager.register('get_result_queue',
+                                 callable = lambda:self.result_queue)
+            TaskManager.register('get_data',
+                                 callable = lambda:self.dict_position)
+            TaskManager.register('get_cycle',
+                                 callable = lambda:self.dict_cycle)
+            TaskManager.register('set_worker_info',
+                                 callable = lambda:self.dict_worker_info)
             m = TaskManager(address=(server_ip, server_socket), authkey = b'secret')
             m.connect()
             return m
