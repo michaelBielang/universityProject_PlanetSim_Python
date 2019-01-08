@@ -7,6 +7,8 @@ from threading import Thread
 class TaskManager(BaseManager):
     pass
 
+    @cython.initializedcheck(False)
+    @cython.overflowcheck(False)
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
@@ -38,10 +40,15 @@ class TaskManager(BaseManager):
         thread = Thread(target=self.runServer)
         thread.start()
 
+    @cython.initializedcheck(False)
+    @cython.overflowcheck(False)
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.nonecheck(False)
+    @cython.cdivision(True)
     def runServer(self):
         print('Starting Server with ID :' + str(self.m.address))
         self.m.get_server().serve_forever()
-        self.m.get_server()
 
 
     def clientConnect(self,server_ip="localhost"):

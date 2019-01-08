@@ -130,6 +130,8 @@ class context:
         return True
 
 
+    @cython.initializedcheck(False)
+    @cython.overflowcheck(False)
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
@@ -279,6 +281,8 @@ class context:
                 #InputQueue.task_done()
                 break
 
+    @cython.initializedcheck(False)
+    @cython.overflowcheck(False)
     @cython.boundscheck(False)
     @cython.wraparound(False)
     @cython.nonecheck(False)
