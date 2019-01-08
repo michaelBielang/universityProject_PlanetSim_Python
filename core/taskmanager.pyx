@@ -1,3 +1,4 @@
+import cython
 from multiprocessing import Manager
 from multiprocessing.managers import BaseManager, Value
 import multiprocessing
@@ -6,6 +7,10 @@ from threading import Thread
 class TaskManager(BaseManager):
     pass
 
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.nonecheck(False)
+    @cython.cdivision(True)
     def startup(self,context):
 
         master_socket = int(12345)

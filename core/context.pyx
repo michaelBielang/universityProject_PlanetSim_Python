@@ -279,16 +279,20 @@ class context:
                 #InputQueue.task_done()
                 break
 
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
+    @cython.nonecheck(False)
+    @cython.cdivision(True)
     def updateWorkers(self):
 
         self.taskmanager_class.dict_position["p"] = self.np_bodies
         self.taskmanager_class.dict_cycle["c"] = self.cycle_id
 
-        workers = len(self.taskmanager_class.dict_worker_info)
+        #workers = len(self.taskmanager_class.dict_worker_info)
 
-        if  workers != self.connected_workers:
-            self.taskmanager_class.print_worker_info(self.connected_workers,workers)
-            self.connected_workers = workers
+        #if  workers != self.connected_workers:
+        #    self.taskmanager_class.print_worker_info(self.connected_workers,workers)
+        #    self.connected_workers = workers
 
         #print(self.taskmanager_class.dict_worker_info)
 
@@ -306,8 +310,8 @@ class context:
             # Set new Position
             #print(self.np_bodies)
             #print(item)
-            self.np_bodies[int(item[6])][0:3] = item[0:3]
-            self.np_bodies[int(item[6])][3:6] = item[3:6]
+            self.np_bodies[int(item[6])][0:6] = item[0:6]
+            #self.np_bodies[int(item[6])][3:6] = item[3:6]
             i += 1
 
         ## Join my Workers together
