@@ -4,10 +4,19 @@ import multiprocessing
 from threading import Thread
 
 class TaskManager(BaseManager):
+    """
+    Subclass of BaseManager with functions to start server for the distribution
+    and also manage the client connection.
+    """
     pass
 
     def startup(self,context):
+        """
+        Initialize necessary information for server and start it
+        within a new thread.
 
+        :param context: context object
+        """
         master_socket = int(12345)
         self.task_queue = context.InputQueue
         self.result_queue = context.OutputQueue
@@ -40,6 +49,12 @@ class TaskManager(BaseManager):
 
 
     def clientConnect(self,server_ip="localhost"):
+        """
+        Start connection to server.
+
+        :param server_ip: IP address of the server
+        :return: Instanz of Taskmanager
+        """
         try:
             server_socket = int(12345)
             m = TaskManager(address=(server_ip, server_socket), authkey = b'secret')

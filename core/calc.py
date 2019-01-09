@@ -1,4 +1,6 @@
-"""Module for calculation"""
+"""
+Module provides function for calculations
+"""
 import math
 
 import numpy as np
@@ -6,9 +8,11 @@ import numpy as np
 # The gravitational constant G
 G = 6.67428e-11
 
+
 def calc_inital_velocity(body, context):
     """
-    Calculates the Initial Velocity of random bodies
+    Calculates the Initial Velocity of bodies
+
     :param body: the current body to calculate
     :param context: the current context
     :return: the velocity
@@ -34,8 +38,13 @@ def calc_inital_velocity(body, context):
 
 
 def calculate_velocity(planet, other):
-    """Set velocity based on every planet in the system."""
+    """
+    Calculates velocity for given planet
 
+    :param planet: planet whose velocity to be calculated
+    :param other: other body which affects the acceleration of given planet
+    :return: calculated acceleration for the body
+    """
     distance_vector = other[0:3] - planet[0:3]
     distance_length = math.sqrt(
         math.pow(distance_vector[0], 2) + math.pow(distance_vector[1], 2) +

@@ -1,3 +1,9 @@
+"""
+Module provides class context to save and manage the data needed for the simulation.
+It also contains functions to start and manage the distribution of calculation.
+"""
+
+
 import os
 from multiprocessing import Process
 from multiprocessing.pool import ThreadPool
@@ -10,6 +16,10 @@ from core import calc, taskmanager
 
 
 class context:
+    """
+    Class context to save and manage the data needed for the simulation.
+    It also contains functions to start and manage the distribution of calculation.
+    """
     def __init__(self, num_planets):
         self.mass_all = 0.0
         self.context = []

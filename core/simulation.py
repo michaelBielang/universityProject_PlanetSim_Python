@@ -1,13 +1,22 @@
+""""
+Module to manage the simulation including the initialization and 
+scaling of the system before started.
+"""""
+
 import configparser
-
 import random
-
 import numpy as np
-
 from core.context import context
 
 
 def update_scale_factor(c):
+    """
+    Calculate and update the scale factor according to the distance
+    between planets and centre.
+
+    :param c: context containing information for the simulation
+    :return:
+    """
     maxdistance = 0.0
     for body in c.np_bodies:
         if maxdistance < distance_between_two(c.np_bodies[0], body):
@@ -16,6 +25,13 @@ def update_scale_factor(c):
 
 
 def distance_between_two(body1, body2):
+    """
+    Calculate the distance between to bodies.
+
+    :param body1: body 1
+    :param body2: body 2
+    :return: calculated distance
+    """
     distance_vector = body2[0:3] - body1[0:3]
     distance_length = np.sqrt(distance_vector[0]**2 + distance_vector[1]**2 +
                               distance_vector[2]**2)
@@ -23,6 +39,11 @@ def distance_between_two(body1, body2):
 
 
 def initialize():
+    """
+    Initialize the system according to the configuration saved in config file.
+
+    :return: initialized context object
+    """
     conf = configparser.ConfigParser()
     conf.read("config.ini")
     i = 0
@@ -65,6 +86,7 @@ def initialize():
 def initialize_random(num_planet, area_min, area_max, rad_min, rad_max, mass_min, mass_max):
     """
     Initialize the Random Universe
+
     :param num_planet:  The num of planets specified by the user
     :param area_min:  The area_min specified by the user
     :param area_max:  The area_max specified by the user
