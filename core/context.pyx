@@ -1,7 +1,6 @@
 import cython
 import os
 from multiprocessing import Process
-from multiprocessing.pool import ThreadPool
 import multiprocessing
 import sys
 cdef double G = 6.67428e-11
@@ -10,7 +9,6 @@ cimport libc.math as math
 import numpy as np
 
 from core import calc, taskmanager
-from calc cimport calculate_velocity
 
 cdef exit_notify = multiprocessing.Value('i',0)
 
@@ -22,7 +20,7 @@ class context:
         self.np_bodies = np.zeros((num_planets, 9), dtype=np.float64)
         self.SCALE_FACTOR = 0.0
         self.SCALE_Z = 0.2
-        self.TimeStep = 30000
+        self.TimeStep = 5000
         self.InputQueue = multiprocessing.Queue()
         self.OutputQueue = multiprocessing.Queue()
         self.id_count = 0
@@ -124,9 +122,8 @@ class context:
         :return: None
         """#
 
-        self.Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
-        self.executor = multiprocessing.Pool()
-        for i in range(multiprocessing.cpu_count()):
+        #self.Taskmanager = taskmanager.TaskManager().clientConnect(server_ip)
+        for i in range(multiprocessing.cpu_count()-1):
             p = Process(target=context.ExecutionWorker,args=(server_ip,self.TimeStep))
             p.start()
         return True
@@ -138,6 +135,7 @@ class context:
     @cython.wraparound(False)
     @cython.nonecheck(False)
     @cython.cdivision(True)
+    @cython.binding(True)
     @staticmethod
     def ExecutionWorker(server_ip,timeStep_to_calc):
         """
